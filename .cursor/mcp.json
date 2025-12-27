@@ -1,70 +1,8 @@
 {
   "mcpServers": {
-    "flutter-sdk": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/flutter-sdk",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
-    },
-    "pub-dev": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/pub-dev",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
-    },
-    "flutter-design-system": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/flutter-design-system",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
-    },
-    "flutter-animation": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/flutter-animation",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
-    },
-    "flutter-firebase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/flutter-firebase",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
-    },
-    "flutter-state-management": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@smithery/cli@latest",
-        "run",
-        "@smithery-ai/flutter-state-management",
-        "--key",
-        "086d4cb5-05f7-43d8-8c8f-d2db72c73818"
-      ]
+    "dart": {
+      "command": "dart",
+      "args": ["mcp-server"]
     }
   }
 }

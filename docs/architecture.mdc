@@ -1,0 +1,207 @@
+---
+alwaysApply: true
+---
+
+# Project Overview
+
+이 프로젝트는 **한국 문학 작품을 아랍어로 번역한 책을 읽을 수 있는 모바일 앱**이다.
+
+사용자는 책 목록을 탐색하고, 책을 선택하면 Book Viewer 페이지로 이동하여 책을 읽을 수 있다.  
+읽던 위치(페이지)는 저장되며, 다음에 다시 열었을 때 이어서 읽을 수 있어야 한다.
+
+백엔드는 **Supabase(PostgreSQL + Auth + RLS)** 를 사용한다.
+
+---
+
+# Design Guidelines
+
+- Google Material Design (Material 3) 가이드라인을 따른다
+- 모바일 우선 UI
+- 읽기 경험을 방해하는 UI/광고를 최소화한다
+
+---
+
+# Tech Stack & Architecture
+
+## Frontend
+
+- Flutter
+- Material 3
+- State Management: **Riverpod 2**
+- Feature-first 구조 사용
+
+  ```txt
+  lib/
+  features/
+  auth/
+  books/
+  reader/
+  my_page/
+  core/
+  widgets/
+  theme/
+  utils/
+  ```
+
+## Backend
+
+- Supabase
+  - Auth
+  - PostgreSQL
+  - Row Level Security (RLS)
+
+---
+
+# Authentication
+
+## Requirements
+
+- `supabase_flutter` 사용
+- 지원 로그인 방식:
+  - Google
+  - Facebook
+  - Apple
+- 로그인 상태 유지
+- 로그아웃 지원
+
+## Notes
+
+- `auth.users` 테이블은 Supabase가 관리하며 직접 수정하지 않는다
+- 앱 전용 사용자 정보는 `profiles` 테이블에서 관리한다
+
+---
+
+# Data Model (Supabase)
+
+## Tables
+
+### profiles
+
+- id (uuid, PK, auth.users.id 참조)
+- display_name (text)
+- created_at (timestamp)
+
+### books
+
+- id (uuid, PK)
+- title (text)
+- author (text)
+- cover_url (text)
+- description (text)
+- language (text, ex: "ar")
+- created_at (timestamp)
+
+### book_pages
+
+- id (uuid, PK)
+- book_id (uuid, FK → books.id)
+- page_no (int)
+- content (text)
+
+> MVP 단계에서는 **서버에서 미리 페이지 단위로 분할된 데이터**를 사용한다.
+
+### purchases
+
+- user_id (uuid, FK → auth.users.id)
+- book_id (uuid, FK → books.id)
+- purchased_at (timestamp)
+
+### reading_progress
+
+- user_id (uuid)
+- book_id (uuid)
+- last_page_no (int)
+- updated_at (timestamp)
+
+---
+
+# Security Rules (RLS Policy)
+
+- profiles
+  - 본인만 읽기/쓰기 가능
+- purchases
+  - 본인만 조회 가능
+- reading_progress
+  - 본인만 조회/업데이트 가능
+- book_pages
+  - 구매한 사용자만 조회 가능 (유료 도서 기준)
+
+> 클라이언트는 항상 RLS가 적용된 상태로 Supabase에 직접 접근한다.
+
+---
+
+# Features
+
+## 1. Book List
+
+- 등록된 책 목록을 보여준다
+- 각 책은:
+  - 표지
+  - 제목
+  - 저자
+- 책 선택 시 구매 여부를 확인하고, 구매가 된 상태라면 Book Viewer 페이지로 이동, 구매가 안된 상태라면 구매 페이지로 이동하여 구매를 진행한다.
+
+---
+
+## 2. Book Viewer
+
+### Navigation
+
+- 왼쪽 클릭 → 이전 페이지
+- 오른쪽 클릭 → 다음 페이지
+- 페이지 번호 클릭 시 해당 페이지로 이동
+- 책 목록으로 돌아가는 버튼 제공
+
+### Reader Features
+
+- 텍스트 크기 확대 / 축소
+- 아랍어 RTL 레이아웃 적용
+- 아랍어 전용 폰트 사용
+- 페이지 번호 + 페이지 내용으로 구성
+
+### Pagination Rule
+
+- 페이지는 `page_no` 기준으로 서버에 저장됨
+- 진도 저장은 `last_page_no` 기준
+- 폰트 크기 변경 시 페이지 번호는 **변하지 않음** (MVP 기준)
+
+### Progress
+
+- 페이지 이동 시 자동으로 `reading_progress` 업데이트
+- 책을 다시 열면 마지막으로 읽은 페이지부터 시작
+
+---
+
+## 3. My Page
+
+- 로그인한 사용자가 구매한 책 목록 표시
+- 각 책 선택 시 Book Viewer로 이동
+- 추가 기능:
+  - 로그아웃
+
+---
+
+# Localization & RTL Rules
+
+- 전체 앱은 RTL을 기본으로 지원한다
+- Book Viewer는 반드시 RTL 방향을 유지한다
+- 페이지 번호는 **서구 숫자(1,2,3)** 를 사용한다
+- 줄바꿈은 단어 단위 기준 (임의 분할 금지)
+
+---
+
+# Non-Goals (MVP)
+
+- 구독 모델
+- 소셜 기능
+- 주석/하이라이트
+- 오프라인 다운로드
+- 동적 페이지네이션(스크롤 기반)
+
+---
+
+# Development Rules
+
+- 기능 구현 전, 기존 구조를 임의로 변경하지 않는다
+- DB 스키마 변경이 필요할 경우 반드시 문서에 반영한다
+- Reader UX(읽기 흐름)를 최우선으로 고려한다
