@@ -22,4 +22,3 @@ class SupabaseConfig {
     return key;
   }
 }
-

@@ -28,13 +28,16 @@ class AuthController extends Notifier<AuthState> {
   @override
   AuthState build() => const AuthState();
 
-  /// Google 로그인 (스텁)
+  /// Google 로그인
   Future<void> signInWithGoogle() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // TODO: 실제 Google 로그인 구현
-      await Future.delayed(const Duration(seconds: 1));
-      throw UnimplementedError('Google 로그인은 아직 구현되지 않았습니다.');
+      await SupabaseService.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: SupabaseService.redirectUrl,
+      );
+      // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
+      // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -43,13 +46,16 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
-  /// Facebook 로그인 (스텁)
+  /// Facebook 로그인
   Future<void> signInWithFacebook() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // TODO: 실제 Facebook 로그인 구현
-      await Future.delayed(const Duration(seconds: 1));
-      throw UnimplementedError('Facebook 로그인은 아직 구현되지 않았습니다.');
+      await SupabaseService.auth.signInWithOAuth(
+        OAuthProvider.facebook,
+        redirectTo: SupabaseService.redirectUrl,
+      );
+      // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
+      // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -58,13 +64,16 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
-  /// Apple 로그인 (스텁)
+  /// Apple 로그인
   Future<void> signInWithApple() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      // TODO: 실제 Apple 로그인 구현
-      await Future.delayed(const Duration(seconds: 1));
-      throw UnimplementedError('Apple 로그인은 아직 구현되지 않았습니다.');
+      await SupabaseService.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: SupabaseService.redirectUrl,
+      );
+      // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
+      // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
