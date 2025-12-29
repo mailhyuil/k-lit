@@ -23,11 +23,7 @@ void main() async {
     // Supabase 초기화 실패해도 계속 진행 (개발용)
   }
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

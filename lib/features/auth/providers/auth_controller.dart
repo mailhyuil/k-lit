@@ -7,19 +7,10 @@ class AuthState {
   final bool isLoading;
   final String? error;
 
-  const AuthState({
-    this.isLoading = false,
-    this.error,
-  });
+  const AuthState({this.isLoading = false, this.error});
 
-  AuthState copyWith({
-    bool? isLoading,
-    String? error,
-  }) {
-    return AuthState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
+  AuthState copyWith({bool? isLoading, String? error}) {
+    return AuthState(isLoading: isLoading ?? this.isLoading, error: error);
   }
 }
 
@@ -39,10 +30,7 @@ class AuthController extends Notifier<AuthState> {
       // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
       // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -57,10 +45,7 @@ class AuthController extends Notifier<AuthState> {
       // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
       // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -75,10 +60,7 @@ class AuthController extends Notifier<AuthState> {
       // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
       // 실제 인증 결과는 authStateProvider에서 감지됨
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -89,10 +71,7 @@ class AuthController extends Notifier<AuthState> {
       await SupabaseService.auth.signOut();
       state = state.copyWith(isLoading: false);
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
     }
   }
 
@@ -100,7 +79,8 @@ class AuthController extends Notifier<AuthState> {
     if (error is AuthException) {
       return '로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
     }
-    if (error.toString().contains('network') || error.toString().contains('Network')) {
+    if (error.toString().contains('network') ||
+        error.toString().contains('Network')) {
       return '네트워크 상태를 확인해주세요.';
     }
     if (error.toString().contains('cancel')) {
@@ -114,4 +94,3 @@ class AuthController extends Notifier<AuthState> {
 final authControllerProvider = NotifierProvider<AuthController, AuthState>(
   () => AuthController(),
 );
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/book_providers.dart';
 import '../widgets/book_card.dart';
+import '../models/book.dart'; // Added import for Book model
 
 /// 책 목록 페이지
 class BookListPage extends ConsumerWidget {
@@ -9,12 +10,11 @@ class BookListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bookListState = ref.watch(bookListControllerProvider);
-    final bookListController = ref.read(bookListControllerProvider.notifier);
+    final bookListAsyncValue = ref.watch(bookListWithPurchaseStatusProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Books'),
+        title: const Text('책 목록'), // Changed title
         actions: [
           // My Page 버튼 (플레이스홀더)
           IconButton(
@@ -30,67 +30,63 @@ class BookListPage extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => bookListController.refresh(),
-        child: _buildBody(bookListState, bookListController),
+        onRefresh: () =>
+            ref.refresh(booksProvider.future), // Invalidate booksProvider
+        child: bookListAsyncValue.when(
+          data: (books) {
+            if (books.isEmpty) {
+              return _buildEmptyState();
+            }
+            return _buildBookGrid(books);
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => _buildErrorState(context, ref, error),
+        ),
       ),
     );
   }
 
-  Widget _buildBody(
-    BookListState state,
-    BookListController controller,
-  ) {
-    if (state.isLoading && state.books.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+  // Extracted methods for better readability and reusability
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.book_outlined, size: 64, color: Colors.grey.shade400),
+          const SizedBox(height: 16),
+          Text(
+            '등록된 책이 없습니다.',
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
+    );
+  }
 
-    if (state.error != null && state.books.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              state.error!,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => controller.refresh(),
-              child: const Text('다시 시도'),
-            ),
-          ],
-        ),
-      );
-    }
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object? error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          const SizedBox(height: 16),
+          Text(
+            '책 목록을 불러오는 중 오류가 발생했습니다: ${error.toString()}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () =>
+                ref.invalidate(booksProvider), // Invalidate to retry
+            child: const Text('다시 시도'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    if (state.books.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.book_outlined,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '등록된 책이 없습니다.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
+  Widget _buildBookGrid(List<Book> books) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -99,20 +95,20 @@ class BookListPage extends ConsumerWidget {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
-      itemCount: state.books.length,
+      itemCount: books.length,
       itemBuilder: (context, index) {
-        final book = state.books[index];
+        final book = books[index];
         return BookCard(
           book: book,
+          isPurchased: book.isPurchased, // Pass isPurchased status
           onTap: () {
             // TODO: Book Viewer로 이동
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${book.title} 선택됨')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('${book.title} 선택됨')));
           },
         );
       },
     );
   }
 }
-

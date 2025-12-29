@@ -53,10 +53,7 @@ class BookCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     book.author,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -94,13 +91,8 @@ class BookCard extends StatelessWidget {
     return Container(
       color: Colors.grey.shade200,
       child: const Center(
-        child: Icon(
-          Icons.book,
-          size: 48,
-          color: Colors.grey,
-        ),
+        child: Icon(Icons.book, size: 48, color: Colors.grey),
       ),
     );
   }
 }
-

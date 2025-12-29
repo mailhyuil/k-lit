@@ -20,11 +20,8 @@ class AuthGate extends ConsumerWidget {
           return const LoginPage();
         }
       },
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) {
         // 에러 발생 시에도 LoginPage로 이동 (개발용)
         debugPrint('AuthGate 에러: $error');
@@ -34,4 +31,3 @@ class AuthGate extends ConsumerWidget {
     );
   }
 }
-

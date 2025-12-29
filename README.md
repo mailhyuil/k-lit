@@ -53,12 +53,13 @@ flutter run
 - ✅ Riverpod 3를 사용한 상태 관리
 - ✅ Supabase 초기화 및 환경 변수 설정
 - ✅ AuthGate: 인증 상태에 따른 라우팅
+- ✅ 사용자 프로필 생성/갱신 로직 (로그인 시)
 - ✅ LoginPage: Google/Facebook/Apple 로그인 버튼 (스텁)
-- ✅ BookListPage: 로딩/에러/빈 상태 처리
+- ✅ 책 목록 데이터 연동 및 상태 관리 (Supabase 연동)
+- ✅ BookListPage: 책 목록 UI (AppBar, GridView), 로딩/에러/빈 상태 처리, 구매 상태 표시
 
 ### 향후 구현 예정
 - ⏳ 실제 소셜 로그인 구현
-- ⏳ 책 목록 데이터 연동
 - ⏳ Book Viewer
 - ⏳ 구매 기능
 - ⏳ My Page

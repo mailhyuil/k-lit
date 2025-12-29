@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'redirect_url_helper.dart';
 import 'supabase_config.dart';
 
@@ -36,17 +37,17 @@ class RedirectUrlGenerator {
     final flutterUrl = flutterRedirectUrl;
     final googleUrl = googleRedirectUrl;
 
-    print('\n📋 OAuth 리다이렉트 URL 정보');
-    print('─' * 50);
+    debugPrint('\n📋 OAuth 리다이렉트 URL 정보');
+    debugPrint('─' * 50);
     if (projectRef != null) {
-      print('프로젝트 참조 ID: $projectRef');
+      debugPrint('프로젝트 참조 ID: $projectRef');
     }
-    print('\n1️⃣  Flutter 앱 리다이렉트 URL:');
-    print('   $flutterUrl');
+    debugPrint('\n1️⃣  Flutter 앱 리다이렉트 URL:');
+    debugPrint('   $flutterUrl');
     if (googleUrl != null) {
-      print('\n2️⃣  Google Cloud Console에 추가할 URL:');
-      print('   $googleUrl');
+      debugPrint('\n2️⃣  Google Cloud Console에 추가할 URL:');
+      debugPrint('   $googleUrl');
     }
-    print('─' * 50);
+    debugPrint('─' * 50);
   }
 }

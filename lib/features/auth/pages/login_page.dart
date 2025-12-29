@@ -22,19 +22,13 @@ class LoginPage extends ConsumerWidget {
               // App Title / Logo
               const Text(
                 '한국 문학',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               const Text(
                 '한국 문학 아랍어 번역본을 읽어보세요',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
@@ -116,9 +110,7 @@ class _SocialLoginButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: isLoading
           ? const SizedBox(
@@ -128,13 +120,8 @@ class _SocialLoginButton extends StatelessWidget {
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon),
-                const SizedBox(width: 8),
-                Text(label),
-              ],
+              children: [Icon(icon), const SizedBox(width: 8), Text(label)],
             ),
     );
   }
 }
-

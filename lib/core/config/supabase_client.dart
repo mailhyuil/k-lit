@@ -22,4 +22,3 @@ class SupabaseService {
   /// 현재 사용자
   static User? get currentUser => auth.currentUser;
 }
-
