@@ -35,7 +35,7 @@ class LoginPage extends ConsumerWidget {
 
               // Google 로그인 버튼
               _SocialLoginButton(
-                label: 'Continue with Google',
+                label: 'Google로 로그인',
                 icon: Icons.g_mobiledata,
                 onPressed: authState.isLoading
                     ? null
@@ -46,7 +46,7 @@ class LoginPage extends ConsumerWidget {
 
               // Facebook 로그인 버튼
               _SocialLoginButton(
-                label: 'Continue with Facebook',
+                label: 'Facebook으로 로그인',
                 icon: Icons.facebook,
                 onPressed: authState.isLoading
                     ? null
@@ -57,7 +57,7 @@ class LoginPage extends ConsumerWidget {
 
               // Apple 로그인 버튼
               _SocialLoginButton(
-                label: 'Continue with Apple',
+                label: 'Apple로 로그인',
                 icon: Icons.apple,
                 onPressed: authState.isLoading
                     ? null

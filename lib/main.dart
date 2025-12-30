@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'core/config/revenuecat_config.dart';
 import 'core/config/supabase_client.dart';
 import 'features/auth/widgets/auth_gate.dart';
 
@@ -23,6 +25,14 @@ void main() async {
     // Supabase 초기화 실패해도 계속 진행 (개발용)
   }
 
+  try {
+    // RevenueCat 초기화
+    await RevenueCatConfig.initialize();
+  } catch (e) {
+    debugPrint('RevenueCat 초기화 실패: $e');
+    // RevenueCat 초기화 실패해도 계속 진행 (개발용)
+  }
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -32,8 +42,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '한국 문학',
+      title: 'K-Lit',
       theme: ThemeData(
+        fontFamily: 'NotoNaskhArabic',
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.deepPurple,
           brightness: Brightness.light,

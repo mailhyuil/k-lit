@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../pages/login_page.dart';
 import '../providers/auth_providers.dart';
-import '../../books/pages/book_list_page.dart';
+import '../../navigation/pages/main_navigation.dart';
 
 /// 인증 상태에 따라 라우팅을 결정하는 위젯
 class AuthGate extends ConsumerWidget {
@@ -15,7 +15,7 @@ class AuthGate extends ConsumerWidget {
     return authState.when(
       data: (user) {
         if (user != null) {
-          return const BookListPage();
+          return const MainNavigation();
         } else {
           return const LoginPage();
         }

@@ -2,206 +2,107 @@
 alwaysApply: true
 ---
 
-# Project Overview
+너는 상용 모바일 앱(로그인 + 유료 잠금해제 + 인앱결제)을 만드는 풀스택 시니어 개발자다.
+목표: “무료 앱 + 로그인 + 컬렉션 단위 인앱결제(후속: 구독)” 모델 C MVP를 Supabase + Flutter로 구현한다.
 
-이 프로젝트는 **한국 문학 작품을 아랍어로 번역한 책을 읽을 수 있는 모바일 앱**이다.
+[제품 컨셉]
 
-사용자는 책 목록을 탐색하고, 책을 선택하면 Book Viewer 페이지로 이동하여 책을 읽을 수 있다.  
-읽던 위치(페이지)는 저장되며, 다음에 다시 열었을 때 이어서 읽을 수 있어야 한다.
+- 앱 이름(임시): Korean Essential Literature (Arabic)
+- 타겟: 한국에 관심 많은 아랍어 사용자
+- 가치: 단편/중편을 “테마 컬렉션”으로 묶고, 작품마다 서문/해설/주석을 제공해 “한국 문화 입문 패키지”로 판매
 
-백엔드는 **Supabase(PostgreSQL + Auth + RLS)** 를 사용한다.
+[기술 스택(고정)]
 
----
+- 프론트: Flutter (iOS/Android)
+- 상태관리: Riverpod(권장) 또는 Bloc(둘 중 하나로 일관)
+- 백엔드: Supabase (Postgres + Auth + Storage + RLS + Edge Functions)
+- 결제: RevenueCat(권장) 또는 StoreKit2/Google Billing 직접 연동
+- 분석: Supabase events 테이블에 로깅
 
-# Design Guidelines
+[필수 기능 (MVP)]
 
-- Google Material Design (Material 3) 가이드라인을 따른다
-- 모바일 우선 UI
-- 읽기 경험을 방해하는 UI/광고를 최소화한다
+1. 인증
 
----
+- Supabase Auth 이메일 OTP(코드 또는 매직링크)
+- 게스트 모드(무료 콘텐츠만)
+- 로그인 후 구매 복원(restore)
 
-# Tech Stack & Architecture
+2. 콘텐츠
 
-## Frontend
+- Collection 목록/상세/작품 리스트
+- Story Reader: title_ar, intro_ar, body_ar, commentary_ar
+- 검색(제목/키워드)
+- 아랍어 RTL UI 지원(Directionality, TextAlign, 폰트)
 
-- Flutter
-- Material 3
-- State Management: **Riverpod 2**
-- Feature-first 구조 사용
+3. 무료 체험
 
-  ```txt
-  lib/
-  features/
-  auth/
-  books/
-  reader/
-  my_page/
-  core/
-  widgets/
-  theme/
-  utils/
-  ```
+- 무료 컬렉션 1개 또는 무료 작품 2~3개
+- 나머지는 잠금(락)
 
-## Backend
+4. 결제/권한(Entitlements)
 
-- Supabase
-  - Auth
-  - PostgreSQL
-  - Row Level Security (RLS)
+- 컬렉션 단위 비소모성 구매
+- 구매 성공 → Supabase Edge Function verify_purchase 호출 → entitlements upsert
+- 접근 제어는 RLS가 서버 레벨에서 강제(클라 판단 금지)
 
----
+5. 운영자 CMS(간단)
 
-# Authentication
+- admin만 Collection/Story CRUD
+- cover 이미지는 Supabase Storage 업로드
 
-## Requirements
+6. 이벤트 로깅
 
-- `supabase_flutter` 사용
-- 지원 로그인 방식:
-  - Google
-  - Facebook
-  - Apple
-- 로그인 상태 유지
-- 로그아웃 지원
+- view_collection, view_story, paywall_view, purchase_success, restore_success
 
-## Notes
+[데이터 모델(요구사항)]
 
-- `auth.users` 테이블은 Supabase가 관리하며 직접 수정하지 않는다
-- 앱 전용 사용자 정보는 `profiles` 테이블에서 관리한다
+- collections(id, title_ar, description_ar, cover_path, price_tier, is_free, created_at)
+- stories(id, collection_id, title_ar, intro_ar, body_ar, commentary_ar, order_index, is_free, created_at)
+- entitlements(id, user_id, collection_id, source, product_id, created_at, expires_at nullable)
+- purchases(id, user_id, platform, product_id, rc_transaction_id, raw_payload_json, status, created_at)
+- events(id, user_id nullable, event_name, props_json, created_at)
+- profiles(user_id pk, is_admin boolean, created_at)
 
----
+[보안/품질]
 
-# Data Model (Supabase)
+- RLS 필수:
+  - collections: 공개 읽기
+  - stories: (is_free=true) OR (로그인 & entitlement 보유)만 읽기
+  - entitlements/purchases: 본인만 읽기
+  - admin CRUD는 profiles.is_admin=true만 가능
+- 결제 검증/entitlement 반영은 Edge Function에서만
+- OTP rate limit, 기본 검증, 에러 로깅
 
-## Tables
+[Edge Functions]
 
-### profiles
+- POST /functions/v1/verify_purchase
+- POST /functions/v1/restore_purchases
+- POST /functions/v1/log_event (옵션)
 
-- id (uuid, PK, auth.users.id 참조)
-- display_name (text)
-- created_at (timestamp)
+[Flutter 화면]
 
-### books
+- Onboarding(게스트/로그인)
+- Home(Collections grid/list)
+- CollectionDetail(소개 + 작품 리스트 + 구매 CTA)
+- StoryReader(RTL 뷰어 + 잠금이면 paywall)
+- Library(구매한 컬렉션)
+- Settings(로그아웃/복원)
+- Admin(간단 CRUD + 커버 업로드)
 
-- id (uuid, PK)
-- title (text)
-- author (text)
-- cover_url (text)
-- description (text)
-- language (text, ex: "ar")
-- created_at (timestamp)
+[출력 형식]
 
-### book_pages
+1. 아키텍처(텍스트 다이어그램)
+2. Supabase SQL(DDL + RLS 정책 + seed)
+3. Edge Functions 코드(verify/restore/log)
+4. Flutter 코드(폴더 구조 + 핵심 파일 전체 코드)
+   - supabase_flutter 연동
+   - Riverpod 상태관리(또는 Bloc)
+   - RevenueCat 결제 플로우
+   - RTL UI 적용 예시
+5. 로컬 실행/배포 방법
+6. 이후 확장 로드맵(구독, 오프라인 저장, 추천, 번역 파이프라인)
 
-- id (uuid, PK)
-- book_id (uuid, FK → books.id)
-- page_no (int)
-- content (text)
+추가 조건:
 
-> MVP 단계에서는 **서버에서 미리 페이지 단위로 분할된 데이터**를 사용한다.
-
-### purchases
-
-- user_id (uuid, FK → auth.users.id)
-- book_id (uuid, FK → books.id)
-- purchased_at (timestamp)
-
-### reading_progress
-
-- user_id (uuid)
-- book_id (uuid)
-- last_page_no (int)
-- updated_at (timestamp)
-
----
-
-# Security Rules (RLS Policy)
-
-- profiles
-  - 본인만 읽기/쓰기 가능
-- purchases
-  - 본인만 조회 가능
-- reading_progress
-  - 본인만 조회/업데이트 가능
-- book_pages
-  - 구매한 사용자만 조회 가능 (유료 도서 기준)
-
-> 클라이언트는 항상 RLS가 적용된 상태로 Supabase에 직접 접근한다.
-
----
-
-# Features
-
-## 1. Book List
-
-- 등록된 책 목록을 보여준다
-- 각 책은:
-  - 표지
-  - 제목
-  - 저자
-- 책 선택 시 구매 여부를 확인하고, 구매가 된 상태라면 Book Viewer 페이지로 이동, 구매가 안된 상태라면 구매 페이지로 이동하여 구매를 진행한다.
-
----
-
-## 2. Book Viewer
-
-### Navigation
-
-- 왼쪽 클릭 → 이전 페이지
-- 오른쪽 클릭 → 다음 페이지
-- 페이지 번호 클릭 시 해당 페이지로 이동
-- 책 목록으로 돌아가는 버튼 제공
-
-### Reader Features
-
-- 텍스트 크기 확대 / 축소
-- 아랍어 RTL 레이아웃 적용
-- 아랍어 전용 폰트 사용
-- 페이지 번호 + 페이지 내용으로 구성
-
-### Pagination Rule
-
-- 페이지는 `page_no` 기준으로 서버에 저장됨
-- 진도 저장은 `last_page_no` 기준
-- 폰트 크기 변경 시 페이지 번호는 **변하지 않음** (MVP 기준)
-
-### Progress
-
-- 페이지 이동 시 자동으로 `reading_progress` 업데이트
-- 책을 다시 열면 마지막으로 읽은 페이지부터 시작
-
----
-
-## 3. My Page
-
-- 로그인한 사용자가 구매한 책 목록 표시
-- 각 책 선택 시 Book Viewer로 이동
-- 추가 기능:
-  - 로그아웃
-
----
-
-# Localization & RTL Rules
-
-- 전체 앱은 RTL을 기본으로 지원한다
-- Book Viewer는 반드시 RTL 방향을 유지한다
-- 페이지 번호는 **서구 숫자(1,2,3)** 를 사용한다
-- 줄바꿈은 단어 단위 기준 (임의 분할 금지)
-
----
-
-# Non-Goals (MVP)
-
-- 구독 모델
-- 소셜 기능
-- 주석/하이라이트
-- 오프라인 다운로드
-- 동적 페이지네이션(스크롤 기반)
-
----
-
-# Development Rules
-
-- 기능 구현 전, 기존 구조를 임의로 변경하지 않는다
-- DB 스키마 변경이 필요할 경우 반드시 문서에 반영한다
-- Reader UX(읽기 흐름)를 최우선으로 고려한다
+- 더미 데이터: 무료 컬렉션 1개 + 유료 컬렉션 1개, 총 작품 6개
+- paywall은 “컬렉션 구매” 중심
