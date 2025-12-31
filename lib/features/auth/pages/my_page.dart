@@ -130,7 +130,6 @@ class MyPage extends ConsumerWidget {
   ) {
     return collectionsAsync.when(
       data: (collections) {
-        print('collections: $collections');
         if (collections.isEmpty) {
           return _buildEmptyState(context);
         }

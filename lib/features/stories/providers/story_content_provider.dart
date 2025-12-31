@@ -13,10 +13,7 @@ enum ContentLoadingState { idle, checkingCache, downloading, loaded, error }
 
 /// 콘텐츠 로드 (캐시 우선, 없으면 다운로드)
 /// ⚠️ 권한 체크: 무료 작품이거나 구입한 컬렉션만 다운로드 가능
-Future<StoryContent> _loadStoryContent(
-  String storyId,
-  Ref ref,
-) async {
+Future<StoryContent> _loadStoryContent(String storyId, Ref ref) async {
   final cacheService = ref.read(storyCacheServiceProvider);
   final storageService = ref.read(storyStorageServiceProvider);
 
@@ -37,16 +34,14 @@ Future<StoryContent> _loadStoryContent(
     }
 
     final hasEntitlement = await ref.read(
-      hasEntitlementProvider(story.collectionId).future,
+      hasEntitlementByCollectionIdProvider(story.collectionId).future,
     );
 
     if (hasEntitlement == false) {
       throw Exception('이 작품을 읽으려면 컬렉션을 구매해야 합니다.');
     }
 
-    debugPrint(
-      '✅ Entitlement verified for collection: ${story.collectionId}',
-    );
+    debugPrint('✅ Entitlement verified for collection: ${story.collectionId}');
   }
 
   // 1단계: 캐시 확인

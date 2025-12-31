@@ -130,7 +130,7 @@ class PurchaseController extends Notifier<PurchaseState> {
     // 예: "collection_<collectionId>"
     final entitlementId = 'collection_$collectionId';
     final entitlement = customerInfo.entitlements.all[entitlementId];
-
+    print('entitlement: $entitlement');
     return entitlement != null && entitlement.isActive;
   }
 

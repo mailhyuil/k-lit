@@ -72,6 +72,7 @@ final purchasedCollectionsProvider = FutureProvider<List<Collection>>((
 
   final collections = await ref.watch(collectionsProvider.future);
   final entitlements = await ref.watch(userEntitlementsProvider.future);
+  print('collections: $collections');
   print('entitlements: $entitlements');
   final purchasedCollectionIds = entitlements
       .where((e) => e.isActive)

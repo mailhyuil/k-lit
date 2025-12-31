@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../entitlements/providers/entitlement_provider.dart';
 import '../providers/reader_controller.dart';
 import '../providers/story_content_provider.dart';
 import '../providers/story_provider.dart';
@@ -46,8 +47,13 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
           if (story == null) {
             return _buildNotFound(context);
           }
+          final hasEntitlementFuture = ref.watch(
+            hasEntitlementByStoryIdProvider(widget.storyId),
+          );
 
-          if (story.isLocked && !story.isFree) {
+          final hasEntitlement = hasEntitlementFuture.value ?? false;
+
+          if (story.isLocked && !story.isFree && !hasEntitlement) {
             return _buildLockedState(context);
           }
 
@@ -489,7 +495,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               Icon(
                 Icons.search_off,
                 size: 80,
-                color: const Color(0xFF8B4513).withOpacity(0.5),
+                color: const Color(0xFF8B4513).withValues(alpha: 0.5),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -537,7 +543,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 Icon(
                   Icons.lock_outline,
                   size: 100,
-                  color: const Color(0xFF8B4513).withOpacity(0.7),
+                  color: const Color(0xFF8B4513).withValues(alpha: 0.7),
                 ),
                 const SizedBox(height: 32),
                 const Text(
