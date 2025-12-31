@@ -66,6 +66,7 @@ CREATE TABLE public.collections (
     price_tier text NOT NULL DEFAULT 'free',   -- 'free', 'tier1', 'tier2', etc.
     is_free boolean NOT NULL DEFAULT false,    -- 무료 여부
     order_index integer NOT NULL DEFAULT 0,    -- 정렬 순서
+    rc_identifier text,                       -- RevenueCat 식별자
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL
 );

@@ -8,6 +8,7 @@ class Collection {
   final String? descriptionAr; // 아랍어 설명
   final String? coverPath; // Supabase Storage 경로
   final String priceTier; // 'free', 'tier1', 'tier2', etc.
+  final String? rcIdentifier; // RevenueCat 식별자
   final bool isFree; // 무료 여부
   final int orderIndex; // 정렬 순서
   final DateTime createdAt;
@@ -29,6 +30,7 @@ class Collection {
     required this.updatedAt,
     this.isPurchased = false,
     this.storyCount = 0,
+    this.rcIdentifier,
   });
 
   /// Supabase에서 가져온 데이터를 모델로 변환
@@ -46,6 +48,7 @@ class Collection {
       // 클라이언트 측 필드는 기본값 사용
       isPurchased: false,
       storyCount: map['stories']?[0]?['count'] as int? ?? 0,
+      rcIdentifier: map['rc_identifier'] as String?,
     );
   }
 
@@ -76,6 +79,7 @@ class Collection {
     DateTime? updatedAt,
     bool? isPurchased,
     int? storyCount,
+    String? rcIdentifier,
   }) {
     return Collection(
       id: id ?? this.id,
@@ -89,6 +93,7 @@ class Collection {
       updatedAt: updatedAt ?? this.updatedAt,
       isPurchased: isPurchased ?? this.isPurchased,
       storyCount: storyCount ?? this.storyCount,
+      rcIdentifier: rcIdentifier ?? this.rcIdentifier,
     );
   }
 

@@ -11,7 +11,7 @@ final collectionsProvider = FutureProvider<List<Collection>>((ref) async {
       .from('collections')
       .select('*, stories(count)')
       .order('order_index', ascending: true);
-  print('collections: $response');
+
   return (response as List)
       .map((map) => Collection.fromMap(map as Map<String, dynamic>))
       .toList();

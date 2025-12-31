@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-import '../providers/purchase_provider.dart';
 import '../../collections/models/collection.dart';
+import '../providers/purchase_provider.dart';
 
 /// 구매 다이얼로그
 class PurchaseDialog extends ConsumerWidget {
   final Collection collection;
 
-  const PurchaseDialog({
-    super.key,
-    required this.collection,
-  });
+  const PurchaseDialog({super.key, required this.collection});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,9 +17,7 @@ class PurchaseDialog extends ConsumerWidget {
     final offerings = purchaseState.offerings;
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -84,7 +79,7 @@ class PurchaseDialog extends ConsumerWidget {
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  
+
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 24),
@@ -171,10 +166,7 @@ class PurchaseDialog extends ConsumerWidget {
         const SizedBox(height: 16),
         Text(
           '사용 가능한 상품이 없습니다',
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
         ),
       ],
     );
@@ -193,8 +185,7 @@ class PurchaseDialog extends ConsumerWidget {
 
     // 컬렉션 ID에 맞는 패키지 필터링
     final packages = offering.availablePackages.where((package) {
-      return package.identifier.contains(collection.id) ||
-          package.storeProduct.identifier.contains(collection.id);
+      return package.storeProduct.identifier == collection.rcIdentifier;
     }).toList();
 
     if (packages.isEmpty) {
@@ -214,7 +205,7 @@ class PurchaseDialog extends ConsumerWidget {
     Package package,
   ) {
     final product = package.storeProduct;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -296,6 +287,7 @@ class PurchaseDialog extends ConsumerWidget {
 
     if (success && context.mounted) {
       Navigator.of(context).pop(true); // 구매 성공 결과 반환
+      //TODO: 구매 성공 시 유저의 entitlements를 생성하고 새로고침
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('구매가 완료되었습니다!'),
@@ -321,4 +313,3 @@ class PurchaseDialog extends ConsumerWidget {
     }
   }
 }
-
