@@ -1,6 +1,6 @@
-# Spec: Book List
+# Spec: stories
 
-이 문서는 앱의 **Book List 화면(책 목록)** 기능을 구현하기 위한 스펙이다.  
+이 문서는 앱의 **stories 화면(책 목록)** 기능을 구현하기 위한 스펙이다.  
 사용자는 이 화면에서 읽을 수 있는 책들을 탐색하고, 책을 선택해 Book Viewer로 이동한다.
 
 ---
@@ -35,7 +35,7 @@
 ┌───────────────────────────────┐
 │ App Bar │
 ├───────────────────────────────┤
-│ Book List (Grid / List) │
+│ stories (Grid / List) │
 │ │
 │ [Cover] [Title] │
 │ [Cover] [Title] │
@@ -214,7 +214,7 @@
 
 ## 9. Acceptance Criteria (MVP Checklist)
 
-- [ ] 로그인 후 Book List 화면으로 진입한다.
+- [ ] 로그인 후 stories 화면으로 진입한다.
 - [ ] 책 목록이 정상적으로 표시된다.
 - [ ] 각 책 카드에 표지와 제목이 보인다.
 - [ ] 구매한 책은 구매 상태가 UI에 반영된다.

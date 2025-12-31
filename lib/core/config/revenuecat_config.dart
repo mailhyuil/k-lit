@@ -31,7 +31,7 @@ class RevenueCatConfig {
 
       // RevenueCat 설정
       final configuration = PurchasesConfiguration(apiKey);
-      
+
       await Purchases.configure(configuration);
 
       debugPrint('✅ RevenueCat 초기화 완료');
@@ -60,4 +60,3 @@ class RevenueCatConfig {
     }
   }
 }
-

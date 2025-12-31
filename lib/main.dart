@@ -28,6 +28,11 @@ void main() async {
   try {
     // RevenueCat 초기화
     await RevenueCatConfig.initialize();
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      throw Exception('User is null');
+    }
+    await RevenueCatConfig.setUserId(user.id);
   } catch (e) {
     debugPrint('RevenueCat 초기화 실패: $e');
     // RevenueCat 초기화 실패해도 계속 진행 (개발용)
@@ -42,7 +47,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'K-Lit',
+      title: 'K-LIT',
       theme: ThemeData(
         fontFamily: 'NotoNaskhArabic',
         colorScheme: ColorScheme.fromSeed(

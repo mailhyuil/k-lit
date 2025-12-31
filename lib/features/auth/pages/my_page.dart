@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/auth_controller.dart';
-import '../providers/profile_provider.dart';
+
+import '../../collections/pages/collection_detail_page.dart';
 import '../../collections/providers/collection_provider.dart';
 import '../../collections/widgets/collection_card.dart';
-import '../../collections/pages/collection_detail_page.dart';
+import '../providers/auth_controller.dart';
+import '../providers/profile_provider.dart';
 
 /// My Page - 사용자 프로필 및 구매한 컬렉션 목록
 class MyPage extends ConsumerWidget {
@@ -16,10 +17,7 @@ class MyPage extends ConsumerWidget {
     final purchasedCollectionsAsync = ref.watch(purchasedCollectionsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('마이 페이지'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('마이 페이지'), centerTitle: true),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(profileProvider);
@@ -30,7 +28,7 @@ class MyPage extends ConsumerWidget {
           children: [
             // 프로필 요약
             _buildProfileSummary(context, profileAsync),
-            
+
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 24),
@@ -38,9 +36,9 @@ class MyPage extends ConsumerWidget {
             // 구매한 컬렉션 섹션 헤더
             Text(
               '구매한 컬렉션',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -87,9 +85,8 @@ class MyPage extends ConsumerWidget {
                     children: [
                       Text(
                         displayName,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -111,12 +108,12 @@ class MyPage extends ConsumerWidget {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child:                   Text(
-                    '사용자',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: Text(
+                  '사용자',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
               ),
             ],
           ),
@@ -133,6 +130,7 @@ class MyPage extends ConsumerWidget {
   ) {
     return collectionsAsync.when(
       data: (collections) {
+        print('collections: $collections');
         if (collections.isEmpty) {
           return _buildEmptyState(context);
         }
@@ -154,9 +152,8 @@ class MyPage extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CollectionDetailPage(
-                      collectionId: collection.id,
-                    ),
+                    builder: (context) =>
+                        CollectionDetailPage(collectionId: collection.id),
                   ),
                 );
               },
@@ -181,9 +178,7 @@ class MyPage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               '컬렉션을 불러오는 중 오류가 발생했습니다',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -213,19 +208,9 @@ class MyPage extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               '구매한 컬렉션이 없습니다',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.shopping_bag_outlined),
-              label: const Text('컬렉션 둘러보기'),
-            ),
           ],
         ),
       ),
@@ -245,9 +230,7 @@ class MyPage extends ConsumerWidget {
         label: const Text('로그아웃'),
         style: OutlinedButton.styleFrom(
           foregroundColor: Theme.of(context).colorScheme.error,
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.error,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.error),
         ),
       ),
     );
@@ -278,7 +261,7 @@ class MyPage extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       await ref.read(authControllerProvider.notifier).signOut();
-      
+
       // 로그아웃 후 LoginPage로 이동 (navigation stack 정리)
       if (context.mounted) {
         Navigator.of(context).popUntil((route) => route.isFirst);
@@ -286,4 +269,3 @@ class MyPage extends ConsumerWidget {
     }
   }
 }
-

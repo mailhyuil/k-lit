@@ -1,5 +1,7 @@
+// Setup type definitions for built-in Supabase Runtime APIs
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 interface RevenueCatEvent {
   id: string;
@@ -13,7 +15,7 @@ interface RevenueCatEvent {
   // ... other properties
 }
 
-serve(async (req) => {
+serve(async req => {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
@@ -32,15 +34,16 @@ serve(async (req) => {
     console.log("Received RevenueCat event:", JSON.stringify(event, null, 2));
 
     if (
-      (event.type === "INITIAL_PURCHASE" ||
-        event.type === "RENEWAL" ||
-        event.type === "NON_RENEWING_PURCHASE") &&
+      (event.type === "INITIAL_PURCHASE" || event.type === "RENEWAL" || event.type === "NON_RENEWING_PURCHASE") &&
       event.product_id
     ) {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SECRET_KEY") ?? "",
-      );
+      const url = Deno.env.get("SUPABASE_URL");
+      if (!url) throw new Error("SUPABASE_URL is not defined");
+      const key = Deno.env.get("SECRET_KEY");
+      if (!key) throw new Error("SECRET_KEY is not defined");
+
+      const supabase = createClient(url, key);
+
       const userId = event.app_user_id;
       const rcIdentifier = event.product_id;
 
@@ -52,11 +55,7 @@ serve(async (req) => {
         .single();
 
       if (collectionError) {
-        console.error(
-          "Error fetching collection for rc_identifier:",
-          rcIdentifier,
-          collectionError,
-        );
+        console.error("Error fetching collection for rc_identifier:", rcIdentifier, collectionError);
       } else if (collection) {
         const collectionId = collection.id;
 
@@ -72,42 +71,27 @@ serve(async (req) => {
           status: "completed",
         };
 
-        const { error: purchaseError } = await supabase
-          .from("purchases")
-          .insert(purchaseRecord);
+        const { error: purchaseError } = await supabase.from("purchases").insert(purchaseRecord);
 
         if (purchaseError) {
           console.error("Error inserting purchase record:", purchaseError);
           // Decide if you should stop or continue despite the error
         } else {
-          console.log(
-            "Successfully inserted purchase record for user:",
-            userId,
-            "and collection:",
-            collectionId,
-          );
+          console.log("Successfully inserted purchase record for user:", userId, "and collection:", collectionId);
         }
 
         // 2. Insert the entitlement for the user and collection
-        const { error: insertError } = await supabase.from("entitlements")
-          .insert({
-            user_id: userId,
-            collection_id: collectionId,
-            source: "purchase", // or 'subscription'
-            product_id: rcIdentifier,
-          });
+        const { error: insertError } = await supabase.from("entitlements").insert({
+          user_id: userId,
+          collection_id: collectionId,
+          source: "purchase", // or 'subscription'
+          product_id: rcIdentifier,
+        });
 
         if (insertError) {
           console.error("Error inserting entitlement:", insertError);
-        }
-
-        else {
-          console.log(
-            "Successfully inserted entitlement for user:",
-            userId,
-            "and collection:",
-            collectionId,
-          );
+        } else {
+          console.log("Successfully inserted entitlement for user:", userId, "and collection:", collectionId);
         }
       } else {
         console.warn("No collection found for rc_identifier:", rcIdentifier);

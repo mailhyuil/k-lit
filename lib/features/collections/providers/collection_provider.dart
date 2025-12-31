@@ -67,18 +67,19 @@ final purchasedCollectionsProvider = FutureProvider<List<Collection>>((
   ref,
 ) async {
   final isAuthenticated = ref.watch(isAuthenticatedProvider);
+  print('isAuthenticated: $isAuthenticated');
   if (!isAuthenticated) return [];
 
   final collections = await ref.watch(collectionsProvider.future);
   final entitlements = await ref.watch(userEntitlementsProvider.future);
-
+  print('entitlements: $entitlements');
   final purchasedCollectionIds = entitlements
       .where((e) => e.isActive)
       .map((e) => e.collectionId)
       .toSet();
 
   return collections
-      .where((c) => c.isFree || purchasedCollectionIds.contains(c.id))
+      .where((c) => purchasedCollectionIds.contains(c.id))
       .map((c) => c.copyWith(isPurchased: true))
       .toList();
 });

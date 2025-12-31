@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "supabase-cli": "^0.0.21"
+  }
+}

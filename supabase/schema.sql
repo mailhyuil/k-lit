@@ -113,7 +113,8 @@ CREATE TABLE public.collections (
     is_free boolean NOT NULL DEFAULT false,
     order_index integer NOT NULL DEFAULT 0,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    rc_identifier text
 );
 
 COMMENT ON TABLE public.collections IS '작품 컬렉션 (주제별 묶음)';
