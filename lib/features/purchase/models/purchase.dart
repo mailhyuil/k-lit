@@ -41,20 +41,4 @@ class Purchase {
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
-
-  /// 모델을 Map으로 변환 (Supabase INSERT/UPDATE 용)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'collection_id': collectionId,
-      'product_id': productId,
-      'transaction_id': transactionId,
-      'source': source,
-      'amount_cents': amountCents,
-      'currency': currency,
-      'status': status,
-      'created_at': createdAt.toIso8601String(),
-    };
-  }
 }

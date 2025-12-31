@@ -4,12 +4,12 @@
 /// 구매, 프로모션, 구독 등 다양한 출처 지원
 class Entitlement {
   final String id;
-  final String userId;            // 사용자 ID
-  final String collectionId;      // 컬렉션 ID
-  final String source;            // 'purchase', 'promo', 'subscription'
-  final String? productId;        // RevenueCat 또는 스토어 상품 ID
+  final String userId; // 사용자 ID
+  final String collectionId; // 컬렉션 ID
+  final String source; // 'purchase', 'promo', 'subscription'
+  final String? productId; // RevenueCat 또는 스토어 상품 ID
   final DateTime createdAt;
-  final DateTime? expiresAt;      // NULL이면 영구 소유
+  final DateTime? expiresAt; // NULL이면 영구 소유
 
   const Entitlement({
     required this.id,
@@ -34,19 +34,6 @@ class Entitlement {
           ? DateTime.parse(map['expires_at'] as String)
           : null,
     );
-  }
-
-  /// 모델을 Map으로 변환 (Supabase INSERT/UPDATE 용)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'user_id': userId,
-      'collection_id': collectionId,
-      'source': source,
-      'product_id': productId,
-      'created_at': createdAt.toIso8601String(),
-      'expires_at': expiresAt?.toIso8601String(),
-    };
   }
 
   /// copyWith 메서드
@@ -102,11 +89,11 @@ class Entitlement {
     if (expiresAt == null) {
       return '영구 소유';
     }
-    
+
     if (!isActive) {
       return '만료됨';
     }
-    
+
     final days = daysUntilExpiration!;
     if (days == 0) {
       return '오늘 만료';
@@ -133,4 +120,3 @@ class Entitlement {
   @override
   int get hashCode => id.hashCode;
 }
-

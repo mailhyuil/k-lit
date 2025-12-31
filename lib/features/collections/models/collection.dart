@@ -52,20 +52,6 @@ class Collection {
     );
   }
 
-  /// 모델을 Map으로 변환 (Supabase INSERT/UPDATE 용)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title_ar': titleAr,
-      'description_ar': descriptionAr,
-      'cover_path': coverPath,
-      'price_tier': priceTier,
-      'is_free': isFree,
-      'order_index': orderIndex,
-      'updated_at': updatedAt.toIso8601String(),
-    };
-  }
-
   /// copyWith 메서드 (불변성 유지)
   Collection copyWith({
     String? id,

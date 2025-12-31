@@ -4,25 +4,25 @@
 /// Storage: 본문(body) - 구입 후 다운로드
 class Story {
   final String id;
-  final String collectionId;     // 소속 컬렉션 ID
-  final String titleAr;           // 아랍어 제목
-  
+  final String collectionId; // 소속 컬렉션 ID
+  final String titleAr; // 아랍어 제목
+
   // DB에 저장 (미리보기용 - 무료 공개)
-  final String? introAr;          // 아랍어 서문
-  final String? commentaryAr;     // 아랍어 해설/주석
-  
+  final String? introAr; // 아랍어 서문
+  final String? commentaryAr; // 아랍어 해설/주석
+
   // Storage 참조 (본문 - 구입 후 다운로드)
-  final String contentUrl;        // Storage 경로 (예: 'story-contents/{id}.json')
-  final int contentVersion;       // 콘텐츠 버전 (캐시 무효화용)
-  final int? contentSizeBytes;    // 파일 크기 (다운로드 예상 시간 표시용)
-  
-  final int orderIndex;           // 컬렉션 내 정렬 순서
-  final bool isFree;              // 무료 체험용 작품 여부
+  final String contentUrl; // Storage 경로 (예: 'story-contents/{id}.json')
+  final int contentVersion; // 콘텐츠 버전 (캐시 무효화용)
+  final int? contentSizeBytes; // 파일 크기 (다운로드 예상 시간 표시용)
+
+  final int orderIndex; // 컬렉션 내 정렬 순서
+  final bool isFree; // 무료 체험용 작품 여부
   final DateTime createdAt;
   final DateTime updatedAt;
 
   // 클라이언트 측 추가 필드
-  final bool isLocked;            // 잠금 상태 (client-side)
+  final bool isLocked; // 잠금 상태 (client-side)
 
   const Story({
     required this.id,
@@ -58,23 +58,6 @@ class Story {
       // isLocked는 RLS 정책에 의해 결정됨 (기본값 true)
       isLocked: true,
     );
-  }
-
-  /// 모델을 Map으로 변환 (Supabase INSERT/UPDATE 용)
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'collection_id': collectionId,
-      'title_ar': titleAr,
-      'intro_ar': introAr,
-      'commentary_ar': commentaryAr,
-      'content_url': contentUrl,
-      'content_version': contentVersion,
-      'content_size_bytes': contentSizeBytes,
-      'order_index': orderIndex,
-      'is_free': isFree,
-      'updated_at': updatedAt.toIso8601String(),
-    };
   }
 
   /// copyWith 메서드
@@ -128,19 +111,19 @@ class Story {
   /// [bodyAr]는 Storage에서 로드한 본문 텍스트
   String getFullContent(String bodyAr) {
     final parts = <String>[];
-    
+
     if (introAr != null && introAr!.isNotEmpty) {
       parts.add(introAr!);
     }
-    
+
     if (bodyAr.isNotEmpty) {
       parts.add(bodyAr);
     }
-    
+
     if (commentaryAr != null && commentaryAr!.isNotEmpty) {
       parts.add(commentaryAr!);
     }
-    
+
     return parts.join('\n\n');
   }
 
@@ -158,4 +141,3 @@ class Story {
   @override
   int get hashCode => id.hashCode;
 }
-
