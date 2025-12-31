@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/config/supabase_client.dart';
+import 'package:flutter_application_1/features/auth/providers/auth_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/font_size_provider.dart';
 import '../../entitlements/providers/entitlement_provider.dart';
 import '../providers/reader_controller.dart';
 import '../providers/story_content_provider.dart';
@@ -27,6 +30,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   @override
   void initState() {
     super.initState();
+    _fontSize = ref.read(fontSizeProvider);
     _pageController = PageController();
   }
 
@@ -47,9 +51,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
           if (story == null) {
             return _buildNotFound(context);
           }
-          final hasEntitlementFuture = ref.watch(
-            hasEntitlementByStoryIdProvider(widget.storyId),
-          );
+          final hasEntitlementFuture = ref.watch(hasEntitlementByStoryIdProvider(widget.storyId));
 
           final hasEntitlement = hasEntitlementFuture.value ?? false;
 
@@ -82,11 +84,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: Color(0xFF8B4513),
-                  ),
+                  const Icon(Icons.error_outline, size: 48, color: Color(0xFF8B4513)),
                   const SizedBox(height: 16),
                   Text(
                     'خطأ في تحميل المحتوى',
@@ -116,8 +114,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
   void _increaseFontSize() {
     if (_fontSize < 36.0) {
+      final newFontSize = _fontSize + 1.0;
+      ref.read(fontSizeProvider.notifier).setFontSize(newFontSize);
       setState(() {
-        _fontSize += 1.0;
+        _fontSize = newFontSize;
         _pages = []; // 폰트 크기 변경 시 페이지 재계산
       });
     }
@@ -125,8 +125,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
   void _decreaseFontSize() {
     if (_fontSize > 14.0) {
+      final newFontSize = _fontSize - 1.0;
+      ref.read(fontSizeProvider.notifier).setFontSize(newFontSize);
       setState(() {
-        _fontSize -= 1.0;
+        _fontSize = newFontSize;
         _pages = []; // 폰트 크기 변경 시 페이지 재계산
       });
     }
@@ -141,9 +143,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     });
 
     if (_pages.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF8B4513)),
-      );
+      return const Center(child: CircularProgressIndicator(color: Color(0xFF8B4513)));
     }
 
     final isLastPage = _currentPage == _pages.length - 1;
@@ -216,10 +216,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: Row(
                     children: [
                       // 뒤로 가기
@@ -240,19 +237,13 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                       ),
                       // 글씨 크기 감소
                       IconButton(
-                        icon: const Icon(
-                          Icons.text_decrease,
-                          color: Colors.white,
-                        ),
+                        icon: const Icon(Icons.text_decrease, color: Colors.white),
                         onPressed: _decreaseFontSize,
                         tooltip: '글씨 축소',
                       ),
                       // 현재 글씨 크기 표시
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
                           color: Colors.white24,
@@ -269,10 +260,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                       ),
                       // 글씨 크기 증가
                       IconButton(
-                        icon: const Icon(
-                          Icons.text_increase,
-                          color: Colors.white,
-                        ),
+                        icon: const Icon(Icons.text_increase, color: Colors.white),
                         onPressed: _increaseFontSize,
                         tooltip: '글씨 확대',
                       ),
@@ -329,13 +317,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8B4513),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   elevation: 8,
                   shadowColor: Colors.black45,
                 ),
@@ -351,10 +334,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.green.shade700,
                   borderRadius: BorderRadius.circular(24),
@@ -437,18 +417,16 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       _isCompleted = true;
     });
 
-    // TODO: Supabase에 읽기 완료 상태 저장
-    // final user = ref.read(currentUserProvider);
-    // if (user != null) {
-    //   await SupabaseService.instance.client
-    //     .from('reading_progress')
-    //     .upsert({
-    //       'user_id': user.id,
-    //       'story_id': widget.storyId,
-    //       'completed': true,
-    //       'completed_at': DateTime.now().toIso8601String(),
-    //     });
-    // }
+    // Supabase에 읽기 완료 상태 저장
+    final user = ref.read(currentUserProvider);
+    if (user != null) {
+      SupabaseService.instance.client.from('reading_progress').upsert({
+        'user_id': user.id,
+        'story_id': widget.storyId,
+        'completed': true,
+        'completed_at': DateTime.now().toIso8601String(),
+      });
+    }
 
     // 3초 후 자동으로 뒤로 가기
     Future.delayed(const Duration(seconds: 2), () {
@@ -460,11 +438,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
   void _splitPages(BuildContext context, dynamic story, String bodyAr) {
     final size = MediaQuery.of(context).size;
-    final textStyle = TextStyle(
-      fontSize: _fontSize,
-      height: 1.9,
-      letterSpacing: 0.3,
-    );
+    final textStyle = TextStyle(fontSize: _fontSize, height: 1.9, letterSpacing: 0.3);
 
     // intro + body + commentary 조합
     final fullContent = story.getFullContent(bodyAr);
@@ -514,13 +488,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8B4513),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ],
@@ -572,13 +541,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8B4513),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ],
@@ -614,10 +578,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 Text(
                   error.toString(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: const Color(0xFF2C1810).withOpacity(0.6),
-                  ),
+                  style: TextStyle(fontSize: 14, color: const Color(0xFF2C1810).withOpacity(0.6)),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
@@ -627,13 +588,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF8B4513),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
               ],
