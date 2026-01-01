@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/core/theme/reader_theme.dart';
-import 'package:flutter_application_1/core/theme/reader_theme_provider.dart';
+import 'package:k_lit/core/theme/reader_theme.dart';
+import 'package:k_lit/core/theme/reader_theme_provider.dart';
 
 class StoryReaderSettings extends ConsumerWidget {
   const StoryReaderSettings({super.key});
@@ -98,7 +98,7 @@ class StoryReaderSettings extends ConsumerWidget {
       ],
     );
   }
-  
+
   Widget _buildColorSelector(ReaderThemeData theme, WidgetRef ref) {
     const colors = {
       'Paper': Color(0xFFFFF8F0),

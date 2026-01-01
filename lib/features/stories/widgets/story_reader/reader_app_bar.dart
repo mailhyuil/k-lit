@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/stories/widgets/story_reader_settings.dart';
+import 'package:k_lit/features/stories/widgets/story_reader_settings.dart';
 
 class ReaderAppBar extends StatelessWidget {
   const ReaderAppBar({super.key});
@@ -24,7 +24,10 @@ class ReaderAppBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
               children: [
-                IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.of(context).pop()),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.settings, color: Colors.white),

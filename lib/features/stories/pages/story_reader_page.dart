@@ -3,17 +3,17 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/core/config/supabase_client.dart';
-import 'package:flutter_application_1/core/theme/reader_theme.dart';
-import 'package:flutter_application_1/core/theme/reader_theme_provider.dart';
-import 'package:flutter_application_1/features/auth/providers/auth_providers.dart';
-import 'package:flutter_application_1/features/entitlements/providers/entitlement_provider.dart';
-import 'package:flutter_application_1/features/stories/pagination/text_paginator.dart';
-import 'package:flutter_application_1/features/stories/providers/story_content_provider.dart';
-import 'package:flutter_application_1/features/stories/providers/story_provider.dart';
-import 'package:flutter_application_1/features/stories/widgets/story_reader/reader_app_bar.dart';
-import 'package:flutter_application_1/features/stories/widgets/story_reader/reader_error_widgets.dart';
-import 'package:flutter_application_1/features/stories/widgets/story_reader/reader_page_content.dart';
+import 'package:k_lit/core/config/supabase_client.dart';
+import 'package:k_lit/core/theme/reader_theme.dart';
+import 'package:k_lit/core/theme/reader_theme_provider.dart';
+import 'package:k_lit/features/auth/providers/auth_providers.dart';
+import 'package:k_lit/features/entitlements/providers/entitlement_provider.dart';
+import 'package:k_lit/features/stories/pagination/text_paginator.dart';
+import 'package:k_lit/features/stories/providers/story_content_provider.dart';
+import 'package:k_lit/features/stories/providers/story_provider.dart';
+import 'package:k_lit/features/stories/widgets/story_reader/reader_app_bar.dart';
+import 'package:k_lit/features/stories/widgets/story_reader/reader_error_widgets.dart';
+import 'package:k_lit/features/stories/widgets/story_reader/reader_page_content.dart';
 
 class StoryReaderPage extends ConsumerStatefulWidget {
   final String storyId;
@@ -39,7 +39,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   bool _isPaginating = false;
   bool _paginationDone = false;
   Timer? _debounce;
-  
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +84,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             error: (e, _) => ReaderErrorWidgets.buildContentError(e, _displayTheme),
             data: (storyContent) {
               final fullText = story.getFullContent(storyContent.bodyAr);
-              
+
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (!mounted) return;
                 if (_pages.isEmpty && !_isPaginating) {
@@ -109,15 +109,17 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
     _paginator?.cancel();
 
-    final fullText = ref.read(storyContentProvider(widget.storyId)).when(
-      data: (content) {
-        final story = ref.read(storyProvider(widget.storyId)).value;
-        return story?.getFullContent(content.bodyAr) ?? '';
-      },
-      loading: () => '',
-      error: (e, s) => '',
-    );
-    
+    final fullText = ref
+        .read(storyContentProvider(widget.storyId))
+        .when(
+          data: (content) {
+            final story = ref.read(storyProvider(widget.storyId)).value;
+            return story?.getFullContent(content.bodyAr) ?? '';
+          },
+          loading: () => '',
+          error: (e, s) => '',
+        );
+
     if (fullText.isEmpty) return;
 
     _debounce?.cancel();
@@ -146,7 +148,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     );
 
     final newPages = await _paginator!.paginate();
-    
+
     if (!mounted) return;
 
     setState(() {
@@ -172,7 +174,9 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
   Widget _buildReader(BuildContext context) {
     final hasPages = _pages.isNotEmpty;
-    final totalLabel = _paginationDone ? _pages.length.toString() : (_estimatedTotalPages?.toString() ?? '?');
+    final totalLabel = _paginationDone
+        ? _pages.length.toString()
+        : (_estimatedTotalPages?.toString() ?? '?');
     final isLastPage = _paginationDone && hasPages && _currentPage == _pages.length - 1;
 
     return Stack(
@@ -197,35 +201,54 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
         ),
         Row(
           children: [
-            Expanded(child: GestureDetector(onTap: _previousPage, behavior: HitTestBehavior.translucent)),
-            Expanded(child: GestureDetector(onTap: () => setState(() => _showControls = !_showControls), behavior: HitTestBehavior.translucent)),
-            Expanded(child: GestureDetector(onTap: _nextPage, behavior: HitTestBehavior.translucent)),
+            Expanded(
+              child: GestureDetector(onTap: _previousPage, behavior: HitTestBehavior.translucent),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _showControls = !_showControls),
+                behavior: HitTestBehavior.translucent,
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(onTap: _nextPage, behavior: HitTestBehavior.translucent),
+            ),
           ],
         ),
         if (_showControls) const ReaderAppBar(),
         if (hasPages)
-        Positioned(
-          bottom: 24,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(color: Colors.black.withAlpha((255 * 0.7).round()), borderRadius: BorderRadius.circular(24)),
-              child: Text(
-                '${_currentPage + 1} / $totalLabel',
-                style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+          Positioned(
+            bottom: 24,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha((255 * 0.7).round()),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Text(
+                  '${_currentPage + 1} / $totalLabel',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
         if (_isPaginating)
           Positioned(
             top: 90,
             right: 16,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(color: Colors.black.withAlpha((255 * 0.55).round()), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha((255 * 0.55).round()),
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: const Text('reflow...', style: TextStyle(color: Colors.white, fontSize: 12)),
             ),
           ),
@@ -239,7 +262,12 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 onPressed: _completeReading,
                 icon: const Icon(Icons.check_circle),
                 label: const Text('읽기 완료'),
-                style: ElevatedButton.styleFrom(backgroundColor: _displayTheme.textColor, foregroundColor: _displayTheme.backgroundColor, padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _displayTheme.textColor,
+                  foregroundColor: _displayTheme.backgroundColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                ),
               ),
             ),
           ),
@@ -251,13 +279,23 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                decoration: BoxDecoration(color: Colors.green.shade700, borderRadius: BorderRadius.circular(24)),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade700,
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.check_circle, color: Colors.white, size: 20),
                     SizedBox(width: 8),
-                    Text('읽기 완료!', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(
+                      '읽기 완료!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -270,13 +308,19 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   void _nextPage() {
     if (_pages.isEmpty) return;
     if (_currentPage < _pages.length - 1) {
-      _pageController.nextPage(duration: const Duration(milliseconds: 380), curve: Curves.easeOutCubic);
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 380),
+        curve: Curves.easeOutCubic,
+      );
     }
   }
 
   void _previousPage() {
     if (_currentPage > 0) {
-      _pageController.previousPage(duration: const Duration(milliseconds: 380), curve: Curves.easeOutCubic);
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 380),
+        curve: Curves.easeOutCubic,
+      );
     }
   }
 
@@ -310,7 +354,9 @@ class _PageTurn extends StatelessWidget {
       builder: (context, _) {
         double page = 0.0;
         try {
-          page = controller.hasClients ? (controller.page ?? controller.initialPage.toDouble()) : 0.0;
+          page = controller.hasClients
+              ? (controller.page ?? controller.initialPage.toDouble())
+              : 0.0;
         } catch (_) {
           page = 0.0;
         }
