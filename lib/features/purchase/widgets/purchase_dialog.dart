@@ -34,17 +34,11 @@ class PurchaseDialog extends ConsumerWidget {
                     Theme.of(context).colorScheme.secondary,
                   ],
                 ),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.collections_bookmark,
-                    size: 48,
-                    color: Colors.white,
-                  ),
+                  Icon(Icons.collections_bookmark, size: 48, color: Colors.white),
                   const SizedBox(height: 12),
                   Text(
                     collection.titleAr,
@@ -70,11 +64,7 @@ class PurchaseDialog extends ConsumerWidget {
                   if (collection.descriptionAr?.isNotEmpty ?? false)
                     Text(
                       collection.descriptionAr!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
-                        height: 1.5,
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey.shade700, height: 1.5),
                       textAlign: TextAlign.center,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
@@ -108,10 +98,7 @@ class PurchaseDialog extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               purchaseState.error!,
-                              style: TextStyle(
-                                color: Colors.red.shade700,
-                                fontSize: 13,
-                              ),
+                              style: TextStyle(color: Colors.red.shade700, fontSize: 13),
                             ),
                           ),
                         ],
@@ -141,9 +128,7 @@ class PurchaseDialog extends ConsumerWidget {
                           : () => _restorePurchases(context, ref),
                       icon: const Icon(Icons.restore, size: 18),
                       label: const Text('복원'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade600,
-                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600),
                     ),
                   ),
                 ],
@@ -158,27 +143,17 @@ class PurchaseDialog extends ConsumerWidget {
   Widget _buildNoProducts(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          Icons.shopping_cart_outlined,
-          size: 48,
-          color: Colors.grey.shade400,
-        ),
+        Icon(Icons.shopping_cart_outlined, size: 48, color: Colors.grey.shade400),
         const SizedBox(height: 16),
-        Text(
-          '사용 가능한 상품이 없습니다',
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
-        ),
+        Text('사용 가능한 상품이 없습니다', style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
       ],
     );
   }
 
-  Widget _buildProductList(
-    BuildContext context,
-    WidgetRef ref,
-    Offerings offerings,
-  ) {
+  Widget _buildProductList(BuildContext context, WidgetRef ref, Offerings offerings) {
     // 현재 offering 가져오기 (첫 번째 것 사용)
     final offering = offerings.current;
+    print('offering: $offering');
     if (offering == null || offering.availablePackages.isEmpty) {
       return _buildNoProducts(context);
     }
@@ -199,18 +174,14 @@ class PurchaseDialog extends ConsumerWidget {
     );
   }
 
-  Widget _buildProductCard(
-    BuildContext context,
-    WidgetRef ref,
-    Package package,
-  ) {
+  Widget _buildProductCard(BuildContext context, WidgetRef ref, Package package) {
     final product = package.storeProduct;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           width: 2,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -230,19 +201,13 @@ class PurchaseDialog extends ConsumerWidget {
                     children: [
                       Text(
                         product.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       if (product.description.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Text(
                           product.description,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey.shade600,
-                          ),
+                          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -252,10 +217,7 @@ class PurchaseDialog extends ConsumerWidget {
                 ),
                 const SizedBox(width: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(8),
@@ -277,11 +239,7 @@ class PurchaseDialog extends ConsumerWidget {
     );
   }
 
-  Future<void> _purchase(
-    BuildContext context,
-    WidgetRef ref,
-    Package package,
-  ) async {
+  Future<void> _purchase(BuildContext context, WidgetRef ref, Package package) async {
     final controller = ref.read(purchaseControllerProvider.notifier);
     final success = await controller.purchase(package);
 

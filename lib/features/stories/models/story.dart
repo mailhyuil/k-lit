@@ -44,7 +44,7 @@ class Story {
   factory Story.fromMap(Map<String, dynamic> map) {
     return Story(
       id: map['id'] as String,
-      collectionId: map['collection_id'] as String,
+      collectionId: map['story_collections'][0]['collection_id'] as String,
       titleAr: map['title_ar'] as String,
       introAr: map['intro_ar'] as String?,
       commentaryAr: map['commentary_ar'] as String?,
