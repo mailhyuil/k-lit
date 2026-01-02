@@ -15,7 +15,7 @@ class CollectionDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final collectionAsync = ref.watch(collectionProvider(collectionId));
+    final collectionAsync = ref.watch(collectionByIdProvider(collectionId));
     final storiesAsync = ref.watch(collectionStoriesProvider(collectionId));
     return Scaffold(
       body: collectionAsync.when(
@@ -26,15 +26,17 @@ class CollectionDetailPage extends ConsumerWidget {
           return CustomScrollView(
             slivers: [
               _buildAppBar(context, collection),
-              SliverToBoxAdapter(child: _buildCollectionInfo(context, collection)),
+              SliverToBoxAdapter(
+                child: _buildCollectionInfo(context, collection),
+              ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     '작품 목록',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -47,7 +49,10 @@ class CollectionDetailPage extends ConsumerWidget {
                 ),
                 loading: () => const SliverToBoxAdapter(
                   child: Center(
-                    child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()),
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 ),
                 error: (error, stack) =>
@@ -71,7 +76,10 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           const Text('컬렉션을 찾을 수 없습니다'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('돌아가기')),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('돌아가기'),
+          ),
         ],
       ),
     );
@@ -84,7 +92,10 @@ class CollectionDetailPage extends ConsumerWidget {
       flexibleSpace: FlexibleSpaceBar(
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(4),
+          ),
           child: Text(
             collection.titleAr,
             style: const TextStyle(fontSize: 14, color: Colors.white),
@@ -97,7 +108,8 @@ class CollectionDetailPage extends ConsumerWidget {
             ? Image.network(
                 collection.coverUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildPlaceholderCover(),
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildPlaceholderCover(),
               )
             : _buildPlaceholderCover(),
       ),
@@ -107,7 +119,11 @@ class CollectionDetailPage extends ConsumerWidget {
   Widget _buildPlaceholderCover() {
     return Container(
       color: Colors.grey.shade300,
-      child: Icon(Icons.collections_bookmark, size: 100, color: Colors.grey.shade500),
+      child: Icon(
+        Icons.collections_bookmark,
+        size: 100,
+        color: Colors.grey.shade500,
+      ),
     );
   }
 
@@ -153,7 +169,9 @@ class CollectionDetailPage extends ConsumerWidget {
                 onPressed: () => _handlePurchase(context, collection),
                 icon: const Icon(Icons.shopping_cart),
                 label: Text('컬렉션 구매 (\$2.99)'),
-                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
         ],
@@ -161,7 +179,12 @@ class CollectionDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildStoryList(BuildContext context, WidgetRef ref, List<Story> stories, bool hasAccess) {
+  Widget _buildStoryList(
+    BuildContext context,
+    WidgetRef ref,
+    List<Story> stories,
+    bool hasAccess,
+  ) {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         final story = stories[index];
@@ -169,17 +192,25 @@ class CollectionDetailPage extends ConsumerWidget {
 
         return ListTile(
           leading: CircleAvatar(child: Text('${index + 1}')),
-          title: Text(story.titleAr, textDirection: TextDirection.rtl, textAlign: TextAlign.right),
+          title: Text(
+            story.titleAr,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+          ),
           subtitle: story.isFree
               ? const Text('무료 체험', style: TextStyle(color: Colors.green))
               : null,
-          trailing: canRead ? const Icon(Icons.chevron_right) : const Icon(Icons.lock_outline),
+          trailing: canRead
+              ? const Icon(Icons.chevron_right)
+              : const Icon(Icons.lock_outline),
           onTap: canRead
               ? () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          StoryReaderPage(collectionId: collectionId, storyId: story.id),
+                      builder: (context) => StoryReaderPage(
+                        hasAccess: hasAccess,
+                        storyId: story.id,
+                      ),
                     ),
                   );
                 }
@@ -209,7 +240,10 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           Text('오류: $error'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('돌아가기')),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('돌아가기'),
+          ),
         ],
       ),
     );
@@ -231,7 +265,10 @@ class CollectionDetailPage extends ConsumerWidget {
 
   void _showLockMessage(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('이 작품을 읽으려면 컬렉션을 구매해야 합니다'), duration: Duration(seconds: 2)),
+      const SnackBar(
+        content: Text('이 작품을 읽으려면 컬렉션을 구매해야 합니다'),
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 }

@@ -46,7 +46,6 @@ class StoryStorageService {
 
       // 3. StoryContent 생성
       final content = StoryContent.fromText(bodyText, meta.version);
-
       return content;
     } catch (e) {
       debugPrint('❌ Failed to download content: $e');

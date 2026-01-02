@@ -9,7 +9,12 @@ class PurchaseState {
   final Offerings? offerings;
   final CustomerInfo? customerInfo;
   bool get ready => offerings != null && customerInfo != null;
-  const PurchaseState({this.isLoading = false, this.error, this.offerings, this.customerInfo});
+  const PurchaseState({
+    this.isLoading = false,
+    this.error,
+    this.offerings,
+    this.customerInfo,
+  });
 
   PurchaseState copyWith({
     bool? isLoading,
@@ -47,7 +52,10 @@ class PurchaseController extends Notifier<PurchaseState> {
       debugPrint('✅ Offerings 로드 완료: ${offerings.all.length}개');
     } catch (e) {
       debugPrint('❌ Offerings 로드 실패: $e');
-      state = state.copyWith(isLoading: false, error: 'Offerings를 불러오는데 실패했습니다');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Offerings를 불러오는데 실패했습니다',
+      );
     }
   }
 
@@ -69,9 +77,10 @@ class PurchaseController extends Notifier<PurchaseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
       debugPrint('🛒 구매 시작: ${package.storeProduct.identifier}');
-      final purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
+      final purchaseResult = await Purchases.purchase(
+        PurchaseParams.package(package),
+      );
       final customerInfo = purchaseResult.customerInfo;
-
       state = state.copyWith(isLoading: false, customerInfo: customerInfo);
 
       debugPrint('✅ 구매 완료!');
@@ -113,7 +122,7 @@ class PurchaseController extends Notifier<PurchaseState> {
     }
   }
 
-  /// 특정 컬렉션에 대한 entitlement 확인
+  /// 특정 컬렉션에 대한 Purchase 여부 확인
   bool isPurchased(String rcIdentifier) {
     final customerInfo = state.customerInfo;
     if (customerInfo == null) return false;
@@ -127,9 +136,8 @@ class PurchaseController extends Notifier<PurchaseState> {
 }
 
 /// Purchase Controller Provider
-final purchaseControllerProvider = NotifierProvider<PurchaseController, PurchaseState>(
-  PurchaseController.new,
-);
+final purchaseControllerProvider =
+    NotifierProvider<PurchaseController, PurchaseState>(PurchaseController.new);
 
 /// 현재 사용 가능한 Offerings Provider
 final currentOfferingsProvider = Provider<Offerings?>((ref) {
@@ -142,7 +150,10 @@ final customerInfoProvider = Provider<CustomerInfo?>((ref) {
 });
 
 /// 특정 컬렉션 구매 여부 Provider
-final collectionPurchasedProvider = Provider.family<bool, String>((ref, collectionId) {
+final collectionPurchasedProvider = Provider.family<bool, String>((
+  ref,
+  rcIdentifier,
+) {
   final controller = ref.watch(purchaseControllerProvider.notifier);
-  return controller.isPurchased(collectionId);
+  return controller.isPurchased(rcIdentifier);
 });

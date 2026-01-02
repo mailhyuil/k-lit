@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/core/theme/reader_theme.dart';
 import 'package:k_lit/core/theme/reader_theme_provider.dart';
-import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/features/stories/pagination/text_paginator.dart';
 import 'package:k_lit/features/stories/providers/story_content_provider.dart';
 import 'package:k_lit/features/stories/providers/story_provider.dart';
@@ -15,9 +14,13 @@ import 'package:k_lit/features/stories/widgets/story_reader/reader_page_content.
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryReaderPage extends ConsumerStatefulWidget {
-  final String collectionId;
   final String storyId;
-  const StoryReaderPage({super.key, required this.collectionId, required this.storyId});
+  final bool hasAccess;
+  const StoryReaderPage({
+    super.key,
+    required this.storyId,
+    required this.hasAccess,
+  });
 
   @override
   ConsumerState<StoryReaderPage> createState() => _StoryReaderPageState();
@@ -84,26 +87,17 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     return Scaffold(
       backgroundColor: _displayTheme.backgroundColor,
       body: storyAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
         data: (story) {
           if (story == null) {
             return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
           }
-
-          final hasEntitlement = ref.watch(collectionPurchasedProvider(widget.collectionId));
-
-          if (story.isLocked && !story.isFree && !hasEntitlement) {
+          if (!story.isFree && !widget.hasAccess) {
             return ReaderErrorWidgets.buildLockedState(context, _displayTheme);
           }
-
           final contentAsync = ref.watch(storyContentProvider(widget.storyId));
           return contentAsync.when(
-            loading: () => ReaderErrorWidgets.buildContentLoading(_displayTheme),
-            error: (e, _) => ReaderErrorWidgets.buildContentError(e, _displayTheme),
             data: (storyContent) {
               final fullText = story.getFullContent(storyContent.bodyAr);
-
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (!mounted) {
                   return;
@@ -112,11 +106,17 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                   _startPaginate(fullText, keepIndex: _currentPage);
                 }
               });
-
               return _buildReader(context);
             },
+            loading: () =>
+                ReaderErrorWidgets.buildContentLoading(_displayTheme),
+            error: (e, _) =>
+                ReaderErrorWidgets.buildContentError(e, _displayTheme),
           );
         },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) =>
+            ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
       ),
     );
   }
@@ -180,7 +180,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       _estimatedTotalPages = _pages.length;
     });
 
-    if (_pageController.hasClients && _pageController.page?.round() != _currentPage) {
+    if (_pageController.hasClients &&
+        _pageController.page?.round() != _currentPage) {
       _pageController.jumpToPage(_currentPage);
     }
   }
@@ -230,16 +231,26 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             },
             itemBuilder: (context, index) {
               if (_pages.isEmpty) {
-                return Center(child: CircularProgressIndicator(color: _displayTheme.textColor));
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: _displayTheme.textColor,
+                  ),
+                );
               }
-              return ReaderPageContent(pageText: _pages[index], theme: _displayTheme);
+              return ReaderPageContent(
+                pageText: _pages[index],
+                theme: _displayTheme,
+              );
             },
           ),
         ),
         Row(
           children: [
             Expanded(
-              child: GestureDetector(onTap: _previousPage, behavior: HitTestBehavior.translucent),
+              child: GestureDetector(
+                onTap: _previousPage,
+                behavior: HitTestBehavior.translucent,
+              ),
             ),
             Expanded(
               child: GestureDetector(
@@ -248,7 +259,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               ),
             ),
             Expanded(
-              child: GestureDetector(onTap: _nextPage, behavior: HitTestBehavior.translucent),
+              child: GestureDetector(
+                onTap: _nextPage,
+                behavior: HitTestBehavior.translucent,
+              ),
             ),
           ],
         ),
@@ -260,7 +274,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withAlpha((255 * 0.7).round()),
                   borderRadius: BorderRadius.circular(24),
@@ -286,7 +303,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 color: Colors.black.withAlpha((255 * 0.55).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text('reflow...', style: TextStyle(color: Colors.white, fontSize: 12)),
+              child: const Text(
+                'reflow...',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
             ),
           ),
       ],

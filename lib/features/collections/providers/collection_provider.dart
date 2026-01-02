@@ -10,26 +10,43 @@ final collectionsProvider = FutureProvider<List<Collection>>((ref) async {
       .from('collections')
       .select('*, stories(count)')
       .order('order_index', ascending: true);
-  return (response as List).map((map) => Collection.fromMap(map as Map<String, dynamic>)).toList();
+  return (response as List)
+      .map((map) => Collection.fromMap(map as Map<String, dynamic>))
+      .toList();
 });
 
 /// 구매된 컬렉션 목록을 제공하는 프로바이더
-final purchasedCollectionsProvider = FutureProvider<List<Collection>>((ref) async {
+final purchasedCollectionsProvider = FutureProvider<List<Collection>>((
+  ref,
+) async {
+  final customerInfo = ref.watch(customerInfoProvider);
+  if (customerInfo == null) {
+    await ref.watch(purchaseControllerProvider.notifier).refresh();
+    return [];
+  }
   final collections = await ref.watch(collectionsProvider.future);
   final collectionPurchased = collections.where(
-    (collection) => ref.read(collectionPurchasedProvider(collection.rcIdentifier ?? '')),
+    (collection) => customerInfo.allPurchasedProductIdentifiers.contains(
+      collection.rcIdentifier,
+    ),
   );
-  return collectionPurchased.toList();
+  return collectionPurchased
+      .map((collection) => collection.copyWith(isPurchased: true))
+      .toList();
 });
 
-final collectionsWithStatusProvider = FutureProvider<List<Collection>>((ref) async {
-  final customerInfo = ref.read(customerInfoProvider);
+final collectionsWithStatusProvider = FutureProvider<List<Collection>>((
+  ref,
+) async {
+  final customerInfo = ref.watch(customerInfoProvider);
   final collections = await ref.watch(collectionsProvider.future);
   return collections
       .map(
         (collection) => collection.copyWith(
           isPurchased:
-              customerInfo?.allPurchasedProductIdentifiers.contains(collection.rcIdentifier) ??
+              customerInfo?.allPurchasedProductIdentifiers.contains(
+                collection.rcIdentifier,
+              ) ??
               false,
         ),
       )
@@ -37,13 +54,13 @@ final collectionsWithStatusProvider = FutureProvider<List<Collection>>((ref) asy
 });
 
 /// 특정 컬렉션을 제공하는 프로바이더
-final collectionProvider = FutureProvider.family<Collection?, String>((ref, collectionId) async {
-  final collections = await ref.watch(collectionsProvider.future);
+final collectionByIdProvider = FutureProvider.family<Collection?, String>((
+  ref,
+  collectionId,
+) async {
+  final collections = await ref.watch(collectionsWithStatusProvider.future);
   final collection = collections.where((c) => c.id == collectionId).firstOrNull;
-  if (collection == null) return null;
-  // 구매 상태 확인
-  final isPurchased = ref.read(collectionPurchasedProvider(collection.rcIdentifier ?? ''));
-  return collection.copyWith(isPurchased: isPurchased);
+  return collection;
 });
 
 /// 무료 컬렉션 목록
@@ -53,19 +70,18 @@ final freeCollectionsProvider = FutureProvider<List<Collection>>((ref) async {
 });
 
 /// 컬렉션 검색 프로바이더
-final searchCollectionsProvider = FutureProvider.family<List<Collection>, String>((
-  ref,
-  query,
-) async {
-  if (query.isEmpty) {
-    return ref.watch(purchasedCollectionsProvider.future);
-  }
+final searchCollectionsProvider =
+    FutureProvider.family<List<Collection>, String>((ref, query) async {
+      if (query.isEmpty) {
+        return ref.watch(collectionsWithStatusProvider.future);
+      }
 
-  final collections = await ref.watch(purchasedCollectionsProvider.future);
-  final lowerQuery = query.toLowerCase();
+      final collections = await ref.watch(collectionsWithStatusProvider.future);
+      final lowerQuery = query.toLowerCase();
 
-  return collections.where((collection) {
-    return collection.titleAr.toLowerCase().contains(lowerQuery) ||
-        (collection.descriptionAr?.toLowerCase().contains(lowerQuery) ?? false);
-  }).toList();
-});
+      return collections.where((collection) {
+        return collection.titleAr.toLowerCase().contains(lowerQuery) ||
+            (collection.descriptionAr?.toLowerCase().contains(lowerQuery) ??
+                false);
+      }).toList();
+    });

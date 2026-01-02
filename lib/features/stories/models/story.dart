@@ -21,9 +21,6 @@ class Story {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  // 클라이언트 측 추가 필드
-  final bool isLocked; // 잠금 상태 (client-side)
-
   const Story({
     required this.id,
     required this.collectionId,
@@ -37,7 +34,6 @@ class Story {
     required this.isFree,
     required this.createdAt,
     required this.updatedAt,
-    this.isLocked = true,
   });
 
   /// Supabase에서 가져온 데이터를 모델로 변환
@@ -55,8 +51,6 @@ class Story {
       isFree: map['is_free'] as bool? ?? false,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
-      // isLocked는 RLS 정책에 의해 결정됨 (기본값 true)
-      isLocked: true,
     );
   }
 
@@ -74,7 +68,6 @@ class Story {
     bool? isFree,
     DateTime? createdAt,
     DateTime? updatedAt,
-    bool? isLocked,
   }) {
     return Story(
       id: id ?? this.id,
@@ -89,7 +82,6 @@ class Story {
       isFree: isFree ?? this.isFree,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      isLocked: isLocked ?? this.isLocked,
     );
   }
 
@@ -129,7 +121,7 @@ class Story {
 
   @override
   String toString() {
-    return 'Story(id: $id, titleAr: $titleAr, isFree: $isFree, isLocked: $isLocked)';
+    return 'Story(id: $id, titleAr: $titleAr, isFree: $isFree)';
   }
 
   @override
