@@ -141,10 +141,13 @@ class TextPaginator {
     final end = math.min(endExclusive, text.length);
     for (int i = end - 1; i >= math.max(0, end - 220); i--) {
       final c = text.codeUnitAt(i);
-      if (c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09) return i + 1;
-      final ch = text[i];
-      if (ch == '،' || ch == '.' || ch == '!' || ch == '؟' || ch == '؛')
+      if (c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09) {
         return i + 1;
+      }
+      final ch = text[i];
+      if (ch == '،' || ch == '.' || ch == '!' || ch == '؟' || ch == '؛') {
+        return i + 1;
+      }
     }
     return 0;
   }

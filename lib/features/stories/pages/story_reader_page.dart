@@ -38,13 +38,21 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   bool _paginationDone = false;
   Timer? _debounce;
   Timer? _saveProgressDebounce;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _displayTheme = ref.read(readerThemeProvider);
-    _loadReadingProgress();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    await _loadReadingProgress();
     _pageController = PageController(initialPage: _currentPage);
+    setState(() {
+      _isInitialized = true;
+    });
   }
 
   @override
@@ -52,12 +60,20 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     _debounce?.cancel();
     _saveProgressDebounce?.cancel();
     _paginator?.cancel();
-    _pageController.dispose();
+    if (_isInitialized) {
+      _pageController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return Scaffold(
+        backgroundColor: _displayTheme.backgroundColor,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     ref.listen<ReaderThemeData>(readerThemeProvider, (previous, next) {
       _onThemeChange(next);
     });
@@ -71,9 +87,9 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
         error: (e, _) =>
             ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
         data: (story) {
-                    if (story == null) {
-                      return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
-                    }
+          if (story == null) {
+            return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
+          }
 
           final entAsync = ref.watch(
             hasEntitlementByStoryIdProvider(widget.storyId),
@@ -130,12 +146,12 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
           error: (e, s) => '',
         );
 
-    if (fullText.isEmpty) return;
-
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
-      _startPaginate(fullText, keepIndex: _currentPage);
+      if (fullText.isNotEmpty) {
+        _startPaginate(fullText, keepIndex: _currentPage);
+      }
     });
   }
 
