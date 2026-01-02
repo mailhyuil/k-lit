@@ -8,13 +8,8 @@ class PurchaseState {
   final String? error;
   final Offerings? offerings;
   final CustomerInfo? customerInfo;
-
-  const PurchaseState({
-    this.isLoading = false,
-    this.error,
-    this.offerings,
-    this.customerInfo,
-  });
+  bool get ready => offerings != null && customerInfo != null;
+  const PurchaseState({this.isLoading = false, this.error, this.offerings, this.customerInfo});
 
   PurchaseState copyWith({
     bool? isLoading,
@@ -52,10 +47,7 @@ class PurchaseController extends Notifier<PurchaseState> {
       debugPrint('✅ Offerings 로드 완료: ${offerings.all.length}개');
     } catch (e) {
       debugPrint('❌ Offerings 로드 실패: $e');
-      state = state.copyWith(
-        isLoading: false,
-        error: 'Offerings를 불러오는데 실패했습니다',
-      );
+      state = state.copyWith(isLoading: false, error: 'Offerings를 불러오는데 실패했습니다');
     }
   }
 
@@ -63,7 +55,9 @@ class PurchaseController extends Notifier<PurchaseState> {
   Future<void> _loadCustomerInfo() async {
     try {
       final customerInfo = await Purchases.getCustomerInfo();
+
       state = state.copyWith(customerInfo: customerInfo);
+
       debugPrint('✅ Customer Info 로드 완료');
     } catch (e) {
       debugPrint('❌ Customer Info 로드 실패: $e');
@@ -75,9 +69,7 @@ class PurchaseController extends Notifier<PurchaseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
       debugPrint('🛒 구매 시작: ${package.storeProduct.identifier}');
-      final purchaseResult = await Purchases.purchase(
-        PurchaseParams.package(package),
-      );
+      final purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
       final customerInfo = purchaseResult.customerInfo;
 
       state = state.copyWith(isLoading: false, customerInfo: customerInfo);
@@ -103,7 +95,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   }
 
   /// 구매 복원
-  Future<bool> restorePurchases() async {
+  Future<bool> restoreCustomerInfo() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
       debugPrint('🔄 구매 복원 시작');
@@ -122,16 +114,10 @@ class PurchaseController extends Notifier<PurchaseState> {
   }
 
   /// 특정 컬렉션에 대한 entitlement 확인
-  bool hasEntitlement(String collectionId) {
+  bool isPurchased(String rcIdentifier) {
     final customerInfo = state.customerInfo;
     if (customerInfo == null) return false;
-
-    // RevenueCat의 entitlement identifier를 사용
-    // 예: "collection_<collectionId>"
-    final entitlementId = 'collection_$collectionId';
-    final entitlement = customerInfo.entitlements.all[entitlementId];
-    print('entitlement: $entitlement');
-    return entitlement != null && entitlement.isActive;
+    return customerInfo.allPurchasedProductIdentifiers.contains(rcIdentifier);
   }
 
   /// 새로고침
@@ -141,8 +127,9 @@ class PurchaseController extends Notifier<PurchaseState> {
 }
 
 /// Purchase Controller Provider
-final purchaseControllerProvider =
-    NotifierProvider<PurchaseController, PurchaseState>(PurchaseController.new);
+final purchaseControllerProvider = NotifierProvider<PurchaseController, PurchaseState>(
+  PurchaseController.new,
+);
 
 /// 현재 사용 가능한 Offerings Provider
 final currentOfferingsProvider = Provider<Offerings?>((ref) {
@@ -155,10 +142,7 @@ final customerInfoProvider = Provider<CustomerInfo?>((ref) {
 });
 
 /// 특정 컬렉션 구매 여부 Provider
-final collectionPurchasedProvider = Provider.family<bool, String>((
-  ref,
-  collectionId,
-) {
+final collectionPurchasedProvider = Provider.family<bool, String>((ref, collectionId) {
   final controller = ref.watch(purchaseControllerProvider.notifier);
-  return controller.hasEntitlement(collectionId);
+  return controller.isPurchased(collectionId);
 });

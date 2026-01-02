@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/core/theme/reader_theme.dart';
 import 'package:k_lit/core/theme/reader_theme_provider.dart';
-import 'package:k_lit/features/entitlements/providers/entitlement_provider.dart';
+import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/features/stories/pagination/text_paginator.dart';
 import 'package:k_lit/features/stories/providers/story_content_provider.dart';
 import 'package:k_lit/features/stories/providers/story_provider.dart';
@@ -15,8 +15,9 @@ import 'package:k_lit/features/stories/widgets/story_reader/reader_page_content.
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryReaderPage extends ConsumerStatefulWidget {
+  final String collectionId;
   final String storyId;
-  const StoryReaderPage({super.key, required this.storyId});
+  const StoryReaderPage({super.key, required this.collectionId, required this.storyId});
 
   @override
   ConsumerState<StoryReaderPage> createState() => _StoryReaderPageState();
@@ -90,8 +91,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
           }
 
-          final entAsync = ref.watch(hasEntitlementByStoryIdProvider(widget.storyId));
-          final hasEntitlement = entAsync.value ?? false;
+          final hasEntitlement = ref.watch(collectionPurchasedProvider(widget.collectionId));
 
           if (story.isLocked && !story.isFree && !hasEntitlement) {
             return ReaderErrorWidgets.buildLockedState(context, _displayTheme);

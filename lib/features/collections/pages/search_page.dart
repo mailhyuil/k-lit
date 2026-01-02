@@ -106,10 +106,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         children: [
           Icon(Icons.search, size: 80, color: Colors.grey.shade400),
           const SizedBox(height: 16),
-          Text(
-            '컬렉션 또는 작품을 검색하세요',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-          ),
+          Text('컬렉션 또는 작품을 검색하세요', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
           const SizedBox(height: 8),
           Text(
             '제목, 설명, 작품 내용으로 검색 가능',
@@ -127,10 +124,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
         children: [
           Icon(Icons.search_off, size: 80, color: Colors.grey.shade400),
           const SizedBox(height: 16),
-          Text(
-            '검색 결과가 없습니다',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-          ),
+          Text('검색 결과가 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
           const SizedBox(height: 8),
           Text(
             '"$query"',
@@ -182,10 +176,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   color: _getResultColor(result).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  _getResultIcon(result),
-                  color: _getResultColor(result),
-                ),
+                child: Icon(_getResultIcon(result), color: _getResultColor(result)),
               ),
               const SizedBox(width: 16),
               // 정보
@@ -196,10 +187,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     // 제목
                     Text(
                       result.title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textDirection: TextDirection.rtl,
                       textAlign: TextAlign.right,
                       maxLines: 1,
@@ -209,10 +197,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       const SizedBox(height: 4),
                       Text(
                         result.description!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                         textDirection: TextDirection.rtl,
                         textAlign: TextAlign.right,
                         maxLines: 2,
@@ -225,14 +210,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       spacing: 8,
                       children: [
                         _buildTag(
-                          result.type == SearchResultType.collection
-                              ? '컬렉션'
-                              : '작품',
+                          result.type == SearchResultType.collection ? '컬렉션' : '작품',
                           Colors.blue,
                         ),
                         if (result.isFree) _buildTag('무료', Colors.green),
-                        if (result.isPurchased && !result.isFree)
-                          _buildTag('구매완료', Colors.orange),
+                        if (result.isPurchased && !result.isFree) _buildTag('구매완료', Colors.orange),
                       ],
                     ),
                   ],
@@ -251,14 +233,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 12,
-          color: color.withOpacity(0.8),
+          color: color.withValues(alpha: 0.8),
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -288,16 +270,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       case SearchResultType.collection:
         // 컬렉션 상세로 이동
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => CollectionDetailPage(collectionId: result.id),
-          ),
+          MaterialPageRoute(builder: (context) => CollectionDetailPage(collectionId: result.id)),
         );
         break;
       case SearchResultType.story:
         // 작품 읽기로 이동
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => StoryReaderPage(storyId: result.id),
+            builder: (context) =>
+                StoryReaderPage(collectionId: result.collectionId, storyId: result.id),
           ),
         );
         break;

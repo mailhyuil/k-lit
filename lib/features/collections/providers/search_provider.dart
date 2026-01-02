@@ -19,7 +19,7 @@ class SearchResult {
   final String? description;
   final bool isFree;
   final bool isPurchased;
-  final String? collectionId; // Story인 경우 소속 컬렉션 ID
+  final String collectionId;
 
   const SearchResult({
     required this.type,
@@ -28,7 +28,7 @@ class SearchResult {
     this.description,
     required this.isFree,
     required this.isPurchased,
-    this.collectionId,
+    required this.collectionId,
   });
 
   factory SearchResult.fromCollection(Collection collection) {
@@ -39,6 +39,7 @@ class SearchResult {
       description: collection.descriptionAr,
       isFree: collection.isFree,
       isPurchased: collection.isPurchased,
+      collectionId: collection.id,
     );
   }
 
@@ -62,12 +63,7 @@ class SearchState {
   final bool isLoading;
   final String? error;
 
-  const SearchState({
-    this.query = '',
-    this.results = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  const SearchState({this.query = '', this.results = const [], this.isLoading = false, this.error});
 
   SearchState copyWith({
     String? query,
@@ -122,9 +118,7 @@ class SearchController extends Notifier<SearchState> {
       final lowerQuery = query.toLowerCase();
 
       // Collection 검색
-      final collections = await ref.read(
-        collectionsWithPurchaseStatusProvider.future,
-      );
+      final collections = await ref.read(purchasedCollectionsProvider.future);
       final collectionResults = collections
           .where(
             (c) =>
@@ -143,9 +137,7 @@ class SearchController extends Notifier<SearchState> {
                 (s.introAr?.toLowerCase().contains(lowerQuery) ?? false) ||
                 (s.commentaryAr?.toLowerCase().contains(lowerQuery) ?? false),
           )
-          .map(
-            (s) => SearchResult.fromStory(s, isPurchased: true),
-          ) // 무료 작품은 항상 접근 가능
+          .map((s) => SearchResult.fromStory(s, isPurchased: true)) // 무료 작품은 항상 접근 가능
           .toList();
 
       // 결과 결합 (Collection 우선)
@@ -166,5 +158,6 @@ class SearchController extends Notifier<SearchState> {
 }
 
 /// 검색 컨트롤러 Provider
-final searchControllerProvider =
-    NotifierProvider<SearchController, SearchState>(() => SearchController());
+final searchControllerProvider = NotifierProvider<SearchController, SearchState>(
+  () => SearchController(),
+);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 
 import '../models/collection.dart';
 import '../providers/collection_provider.dart';
@@ -12,12 +13,17 @@ class CollectionListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final collectionsAsync = ref.watch(collectionsWithPurchaseStatusProvider);
+    final purchase = ref.watch(purchaseControllerProvider);
+    if (!purchase.ready) {
+      //TODO: SplashView 로 변경
+      return const Center(child: CircularProgressIndicator()); // 로딩/스플래시
+    }
+    final collectionsAsync = ref.watch(collectionsWithStatusProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('컬렉션'), centerTitle: true),
       body: RefreshIndicator(
-        onRefresh: () => ref.refresh(collectionsProvider.future),
+        onRefresh: () => ref.refresh(collectionsWithStatusProvider.future),
         child: collectionsAsync.when(
           data: (collections) {
             if (collections.isEmpty) {
@@ -37,16 +43,9 @@ class CollectionListPage extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.collections_bookmark_outlined,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
+          Icon(Icons.collections_bookmark_outlined, size: 64, color: Colors.grey.shade400),
           const SizedBox(height: 16),
-          Text(
-            '등록된 컬렉션이 없습니다',
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-          ),
+          Text('등록된 컬렉션이 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
         ],
       ),
     );
@@ -80,10 +79,7 @@ class CollectionListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCollectionGrid(
-    BuildContext context,
-    List<Collection> collections,
-  ) {
+  Widget _buildCollectionGrid(BuildContext context, List<Collection> collections) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -100,8 +96,7 @@ class CollectionListPage extends ConsumerWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) =>
-                    CollectionDetailPage(collectionId: collection.id),
+                builder: (context) => CollectionDetailPage(collectionId: collection.id),
               ),
             );
           },

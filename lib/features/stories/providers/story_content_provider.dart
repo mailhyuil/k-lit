@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 
 import '../../auth/providers/auth_providers.dart';
-import '../../entitlements/providers/entitlement_provider.dart';
 import '../models/story_content.dart';
 import '../services/story_cache_service.dart';
 import '../services/story_storage_service.dart';
@@ -33,9 +33,7 @@ Future<StoryContent> _loadStoryContent(String storyId, Ref ref) async {
       throw Exception('로그인이 필요합니다.');
     }
 
-    final hasEntitlement = await ref.read(
-      hasEntitlementByCollectionIdProvider(story.collectionId).future,
-    );
+    final hasEntitlement = ref.read(collectionPurchasedProvider(story.collectionId));
 
     if (hasEntitlement == false) {
       throw Exception('이 작품을 읽으려면 컬렉션을 구매해야 합니다.');
@@ -46,10 +44,7 @@ Future<StoryContent> _loadStoryContent(String storyId, Ref ref) async {
 
   // 1단계: 캐시 확인
   debugPrint('🔍 Checking cache for: $storyId');
-  final cachedContent = await cacheService.getCachedContent(
-    storyId,
-    story.contentVersion,
-  );
+  final cachedContent = await cacheService.getCachedContent(storyId, story.contentVersion);
 
   if (cachedContent != null) {
     // 캐시에서 로드 성공
@@ -69,10 +64,7 @@ Future<StoryContent> _loadStoryContent(String storyId, Ref ref) async {
 }
 
 /// 콘텐츠 자동 로드 Provider (권한 체크 포함)
-final storyContentProvider = FutureProvider.family<StoryContent, String>((
-  ref,
-  storyId,
-) async {
+final storyContentProvider = FutureProvider.family<StoryContent, String>((ref, storyId) async {
   return _loadStoryContent(storyId, ref);
 });
 

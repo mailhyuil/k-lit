@@ -43,11 +43,7 @@ class CollectionCard extends StatelessWidget {
   Widget _buildPlaceholderCover() {
     return Container(
       color: Colors.grey.shade200,
-      child: Icon(
-        Icons.collections_bookmark,
-        size: 48,
-        color: Colors.grey.shade400,
-      ),
+      child: Icon(Icons.collections_bookmark, size: 48, color: Colors.grey.shade400),
     );
   }
 
@@ -83,10 +79,8 @@ class CollectionCard extends StatelessWidget {
             spacing: 4,
             children: [
               if (collection.isFree) _buildFreeBadge(),
-              if (collection.isPurchased && !collection.isFree)
-                _buildPurchasedBadge(),
-              if (!collection.isPurchased && !collection.isFree)
-                _buildPriceBadge(context),
+              if (collection.isPurchased && !collection.isFree) _buildPurchasedBadge(),
+              if (!collection.isPurchased && !collection.isFree) _buildPriceBadge(context),
             ],
           ),
         ],
@@ -103,11 +97,7 @@ class CollectionCard extends StatelessWidget {
       ),
       child: Text(
         '무료',
-        style: TextStyle(
-          fontSize: 10,
-          color: Colors.blue.shade700,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(fontSize: 10, color: Colors.blue.shade700, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -121,11 +111,7 @@ class CollectionCard extends StatelessWidget {
       ),
       child: Text(
         '구매완료',
-        style: TextStyle(
-          fontSize: 10,
-          color: Colors.green.shade700,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(fontSize: 10, color: Colors.green.shade700, fontWeight: FontWeight.w600),
       ),
     );
   }
