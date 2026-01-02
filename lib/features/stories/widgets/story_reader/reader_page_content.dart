@@ -5,7 +5,11 @@ class ReaderPageContent extends StatelessWidget {
   final String pageText;
   final ReaderThemeData theme;
 
-  const ReaderPageContent({super.key, required this.pageText, required this.theme});
+  const ReaderPageContent({
+    super.key,
+    required this.pageText,
+    required this.theme,
+  });
 
   @override
   Widget build(BuildContext context) {

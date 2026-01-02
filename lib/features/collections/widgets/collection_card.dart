@@ -7,11 +7,7 @@ class CollectionCard extends StatelessWidget {
   final Collection collection;
   final VoidCallback? onTap;
 
-  const CollectionCard({
-    super.key,
-    required this.collection,
-    this.onTap,
-  });
+  const CollectionCard({super.key, required this.collection, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +20,9 @@ class CollectionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 커버 이미지
-            Expanded(
-              flex: 3,
-              child: _buildCover(),
-            ),
+            Expanded(flex: 3, child: _buildCover()),
             // 정보 영역
-            Expanded(
-              flex: 2,
-              child: _buildInfo(context),
-            ),
+            Expanded(flex: 2, child: _buildInfo(context)),
           ],
         ),
       ),
@@ -72,10 +62,7 @@ class CollectionCard extends StatelessWidget {
           Flexible(
             child: Text(
               collection.titleAr,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textDirection: TextDirection.rtl,
@@ -83,17 +70,14 @@ class CollectionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          
+
           // 작품 수
           Text(
             '${collection.storyCount}개 작품',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 4),
-          
+
           // 상태 뱃지
           Wrap(
             spacing: 4,
@@ -178,4 +162,3 @@ class CollectionCard extends StatelessWidget {
     }
   }
 }
-

@@ -5,7 +5,7 @@ import '../models/profile.dart';
 /// 현재 사용자 프로필 조회
 final profileProvider = FutureProvider<Profile?>((ref) async {
   final user = SupabaseService.currentUser;
-  
+
   if (user == null) {
     return null;
   }
@@ -27,4 +27,3 @@ final profileProvider = FutureProvider<Profile?>((ref) async {
     return null;
   }
 });
-

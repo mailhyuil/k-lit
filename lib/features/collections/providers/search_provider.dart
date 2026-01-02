@@ -9,10 +9,7 @@ import '../models/collection.dart';
 import 'collection_provider.dart';
 
 /// 검색 결과 타입
-enum SearchResultType {
-  collection,
-  story,
-}
+enum SearchResultType { collection, story }
 
 /// 통합 검색 결과
 class SearchResult {
@@ -125,38 +122,39 @@ class SearchController extends Notifier<SearchState> {
       final lowerQuery = query.toLowerCase();
 
       // Collection 검색
-      final collections = await ref.read(collectionsWithPurchaseStatusProvider.future);
+      final collections = await ref.read(
+        collectionsWithPurchaseStatusProvider.future,
+      );
       final collectionResults = collections
-          .where((c) =>
-              c.titleAr.toLowerCase().contains(lowerQuery) ||
-              (c.descriptionAr?.toLowerCase().contains(lowerQuery) ?? false))
+          .where(
+            (c) =>
+                c.titleAr.toLowerCase().contains(lowerQuery) ||
+                (c.descriptionAr?.toLowerCase().contains(lowerQuery) ?? false),
+          )
           .map((c) => SearchResult.fromCollection(c))
           .toList();
 
       // Story 검색 (무료 작품만 - intro와 commentary만 검색)
       final freeStories = await ref.read(freeStoriesProvider.future);
       final storyResults = freeStories
-          .where((s) =>
-              s.titleAr.toLowerCase().contains(lowerQuery) ||
-              (s.introAr?.toLowerCase().contains(lowerQuery) ?? false) ||
-              (s.commentaryAr?.toLowerCase().contains(lowerQuery) ?? false))
-          .map((s) => SearchResult.fromStory(s, isPurchased: true)) // 무료 작품은 항상 접근 가능
+          .where(
+            (s) =>
+                s.titleAr.toLowerCase().contains(lowerQuery) ||
+                (s.introAr?.toLowerCase().contains(lowerQuery) ?? false) ||
+                (s.commentaryAr?.toLowerCase().contains(lowerQuery) ?? false),
+          )
+          .map(
+            (s) => SearchResult.fromStory(s, isPurchased: true),
+          ) // 무료 작품은 항상 접근 가능
           .toList();
 
       // 결과 결합 (Collection 우선)
       final results = [...collectionResults, ...storyResults];
 
-      state = state.copyWith(
-        results: results,
-        isLoading: false,
-        error: null,
-      );
+      state = state.copyWith(results: results, isLoading: false, error: null);
     } catch (e, stack) {
       debugPrint('Search error: $e\n$stack');
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -170,4 +168,3 @@ class SearchController extends Notifier<SearchState> {
 /// 검색 컨트롤러 Provider
 final searchControllerProvider =
     NotifierProvider<SearchController, SearchState>(() => SearchController());
-

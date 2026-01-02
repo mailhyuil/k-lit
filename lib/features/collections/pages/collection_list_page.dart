@@ -15,10 +15,7 @@ class CollectionListPage extends ConsumerWidget {
     final collectionsAsync = ref.watch(collectionsWithPurchaseStatusProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('컬렉션'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('컬렉션'), centerTitle: true),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(collectionsProvider.future),
         child: collectionsAsync.when(
@@ -40,8 +37,11 @@ class CollectionListPage extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.collections_bookmark_outlined,
-              size: 64, color: Colors.grey.shade400),
+          Icon(
+            Icons.collections_bookmark_outlined,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
           const SizedBox(height: 16),
           Text(
             '등록된 컬렉션이 없습니다',
@@ -52,8 +52,7 @@ class CollectionListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(
-      BuildContext context, WidgetRef ref, Object? error) {
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object? error) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +81,9 @@ class CollectionListPage extends ConsumerWidget {
   }
 
   Widget _buildCollectionGrid(
-      BuildContext context, List<Collection> collections) {
+    BuildContext context,
+    List<Collection> collections,
+  ) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -99,9 +100,8 @@ class CollectionListPage extends ConsumerWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => CollectionDetailPage(
-                  collectionId: collection.id,
-                ),
+                builder: (context) =>
+                    CollectionDetailPage(collectionId: collection.id),
               ),
             );
           },
@@ -110,4 +110,3 @@ class CollectionListPage extends ConsumerWidget {
     );
   }
 }
-

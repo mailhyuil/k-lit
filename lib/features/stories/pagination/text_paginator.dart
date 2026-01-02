@@ -24,14 +24,22 @@ class TextPaginator {
   Future<List<String>> paginate() async {
     final job = ++_jobId;
     final dims = _pageDims(context, theme);
-    final style = TextStyle(fontSize: theme.fontSize, height: theme.lineHeight, letterSpacing: 0.3);
+    final style = TextStyle(
+      fontSize: theme.fontSize,
+      height: theme.lineHeight,
+      letterSpacing: 0.3,
+    );
     final painter = TextPainter(
       textDirection: TextDirection.rtl,
       textAlign: TextAlign.right,
       maxLines: null,
     );
 
-    final base = _roughCharsPerPage(theme: theme, width: dims.width, height: dims.height).round();
+    final base = _roughCharsPerPage(
+      theme: theme,
+      width: dims.width,
+      height: dims.height,
+    ).round();
     final newPages = <String>[];
     int cursor = 0;
 
@@ -52,7 +60,9 @@ class TextPaginator {
 
       if (job != _jobId) return [];
 
-      final end = (cut <= 0) ? math.min(remaining.length, math.max(400, base)) : cut;
+      final end = (cut <= 0)
+          ? math.min(remaining.length, math.max(400, base))
+          : cut;
       newPages.add(remaining.substring(0, end).trimRight());
       cursor += end;
 
@@ -73,7 +83,11 @@ class TextPaginator {
       120,
     );
     final w = size.width - padding.left - padding.right;
-    final h = size.height - padding.top - padding.bottom - MediaQuery.of(context).padding.top;
+    final h =
+        size.height -
+        padding.top -
+        padding.bottom -
+        MediaQuery.of(context).padding.top;
     return _PageDims(width: w, height: h);
   }
 
@@ -83,7 +97,10 @@ class TextPaginator {
     required double height,
   }) {
     final charsPerLine = math.max(10.0, width / (0.55 * theme.fontSize));
-    final linesPerPage = math.max(5.0, height / (theme.lineHeight * theme.fontSize));
+    final linesPerPage = math.max(
+      5.0,
+      height / (theme.lineHeight * theme.fontSize),
+    );
     return charsPerLine * linesPerPage * 0.95;
   }
 
@@ -126,7 +143,8 @@ class TextPaginator {
       final c = text.codeUnitAt(i);
       if (c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09) return i + 1;
       final ch = text[i];
-      if (ch == '،' || ch == '.' || ch == '!' || ch == '؟' || ch == '؛') return i + 1;
+      if (ch == '،' || ch == '.' || ch == '!' || ch == '؟' || ch == '؛')
+        return i + 1;
     }
     return 0;
   }

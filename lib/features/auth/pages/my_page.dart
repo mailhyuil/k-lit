@@ -36,7 +36,9 @@ class MyPage extends ConsumerWidget {
             // 구매한 컬렉션 섹션 헤더
             Text(
               '구매한 컬렉션',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -71,7 +73,9 @@ class MyPage extends ConsumerWidget {
                   backgroundImage: profile?.avatarUrl != null
                       ? NetworkImage(profile!.avatarUrl!)
                       : null,
-                  child: profile?.avatarUrl == null ? const Icon(Icons.person, size: 32) : null,
+                  child: profile?.avatarUrl == null
+                      ? const Icon(Icons.person, size: 32)
+                      : null,
                 ),
                 const SizedBox(width: 16),
                 // 사용자 정보
@@ -81,9 +85,8 @@ class MyPage extends ConsumerWidget {
                     children: [
                       Text(
                         displayName,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -92,18 +95,24 @@ class MyPage extends ConsumerWidget {
             );
           },
           loading: () => const Center(
-            child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
           ),
           error: (error, stack) => Row(
             children: [
-              const CircleAvatar(radius: 32, child: Icon(Icons.person, size: 32)),
+              const CircleAvatar(
+                radius: 32,
+                child: Icon(Icons.person, size: 32),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   '사용자',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -142,7 +151,8 @@ class MyPage extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CollectionDetailPage(collectionId: collection.id),
+                    builder: (context) =>
+                        CollectionDetailPage(collectionId: collection.id),
                   ),
                 );
               },
@@ -151,12 +161,19 @@ class MyPage extends ConsumerWidget {
         );
       },
       loading: () => const Center(
-        child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator()),
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: CircularProgressIndicator(),
+        ),
       ),
       error: (error, stack) => Center(
         child: Column(
           children: [
-            Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               '컬렉션을 불러오는 중 오류가 발생했습니다',
@@ -182,9 +199,16 @@ class MyPage extends ConsumerWidget {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Icon(Icons.collections_bookmark_outlined, size: 64, color: Colors.grey.shade400),
+            Icon(
+              Icons.collections_bookmark_outlined,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
             const SizedBox(height: 16),
-            Text('구매한 컬렉션이 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
+            Text(
+              '구매한 컬렉션이 없습니다',
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            ),
             const SizedBox(height: 16),
           ],
         ),
@@ -198,7 +222,9 @@ class MyPage extends ConsumerWidget {
 
     return Center(
       child: OutlinedButton.icon(
-        onPressed: authState.isLoading ? null : () => _showLogoutDialog(context, ref),
+        onPressed: authState.isLoading
+            ? null
+            : () => _showLogoutDialog(context, ref),
         icon: const Icon(Icons.logout),
         label: const Text('로그아웃'),
         style: OutlinedButton.styleFrom(
@@ -217,10 +243,15 @@ class MyPage extends ConsumerWidget {
         title: const Text('로그아웃'),
         content: const Text('정말 로그아웃하시겠습니까?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('취소')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('취소'),
+          ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('로그아웃'),
           ),
         ],

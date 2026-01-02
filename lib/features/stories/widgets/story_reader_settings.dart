@@ -37,7 +37,9 @@ class StoryReaderSettings extends ConsumerWidget {
               theme.paragraphSpacing,
               0.5,
               3.0,
-              (v) => ref.read(readerThemeProvider.notifier).updateParagraphSpacing(v),
+              (v) => ref
+                  .read(readerThemeProvider.notifier)
+                  .updateParagraphSpacing(v),
             ),
             const SizedBox(height: 16),
             _buildSectionTitle(context, 'Margins'),
@@ -46,14 +48,18 @@ class StoryReaderSettings extends ConsumerWidget {
               theme.verticalMargin,
               0,
               100,
-              (v) => ref.read(readerThemeProvider.notifier).updateVerticalMargin(v),
+              (v) => ref
+                  .read(readerThemeProvider.notifier)
+                  .updateVerticalMargin(v),
             ),
             _buildSliderRow(
               'Horizontal',
               theme.horizontalMargin,
               0,
               100,
-              (v) => ref.read(readerThemeProvider.notifier).updateHorizontalMargin(v),
+              (v) => ref
+                  .read(readerThemeProvider.notifier)
+                  .updateHorizontalMargin(v),
             ),
             const SizedBox(height: 16),
             _buildSectionTitle(context, 'Page Color'),
@@ -69,7 +75,9 @@ class StoryReaderSettings extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Text(
         title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -118,7 +126,9 @@ class StoryReaderSettings extends ConsumerWidget {
           selected: isSelected,
           onSelected: (selected) {
             if (selected) {
-              ref.read(readerThemeProvider.notifier).updateBackgroundColor(color);
+              ref
+                  .read(readerThemeProvider.notifier)
+                  .updateBackgroundColor(color);
             }
           },
           avatar: CircleAvatar(backgroundColor: color),

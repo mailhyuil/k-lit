@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'reader_theme.dart';
 
-final readerThemeProvider = NotifierProvider<ReaderThemeNotifier, ReaderThemeData>(ReaderThemeNotifier.new);
+final readerThemeProvider =
+    NotifierProvider<ReaderThemeNotifier, ReaderThemeData>(
+      ReaderThemeNotifier.new,
+    );
 
 class ReaderThemeNotifier extends Notifier<ReaderThemeData> {
   static const _prefsKey = 'reader_theme';
@@ -59,7 +62,7 @@ class ReaderThemeNotifier extends Notifier<ReaderThemeData> {
     state = state.copyWith(verticalMargin: margin);
     _save();
   }
-  
+
   void updateHorizontalMargin(double margin) {
     state = state.copyWith(horizontalMargin: margin);
     _save();

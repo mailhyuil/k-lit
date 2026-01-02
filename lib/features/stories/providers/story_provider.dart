@@ -18,13 +18,22 @@ final collectionStoriesProvider = FutureProvider.family<List<Story>, String>((
       )
     ''')
       .eq('story_collections.collection_id', collectionId)
-      .order('order_index', referencedTable: 'story_collections', ascending: true);
+      .order(
+        'order_index',
+        referencedTable: 'story_collections',
+        ascending: true,
+      );
 
-  return (response as List).map((map) => Story.fromMap(map as Map<String, dynamic>)).toList();
+  return (response as List)
+      .map((map) => Story.fromMap(map as Map<String, dynamic>))
+      .toList();
 });
 
 /// 특정 작품을 제공하는 프로바이더 (Supabase)
-final storyProvider = FutureProvider.family<Story?, String>((ref, storyId) async {
+final storyProvider = FutureProvider.family<Story?, String>((
+  ref,
+  storyId,
+) async {
   try {
     final response = await SupabaseService.instance.client
         .from('stories')
@@ -51,5 +60,7 @@ final freeStoriesProvider = FutureProvider<List<Story>>((ref) async {
       .eq('is_free', true)
       .order('order_index', ascending: true);
 
-  return (response as List).map((map) => Story.fromMap(map as Map<String, dynamic>)).toList();
+  return (response as List)
+      .map((map) => Story.fromMap(map as Map<String, dynamic>))
+      .toList();
 });

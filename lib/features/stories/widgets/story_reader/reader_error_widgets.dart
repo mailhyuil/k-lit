@@ -18,7 +18,11 @@ class ReaderErrorWidgets {
               const SizedBox(height: 24),
               Text(
                 '작품을 찾을 수 없습니다',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: theme.textColor),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: theme.textColor,
+                ),
               ),
               const SizedBox(height: 32),
               ElevatedButton.icon(
@@ -28,8 +32,13 @@ class ReaderErrorWidgets {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.textColor,
                   foregroundColor: theme.backgroundColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -81,8 +90,13 @@ class ReaderErrorWidgets {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.textColor,
                     foregroundColor: theme.backgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
@@ -93,7 +107,11 @@ class ReaderErrorWidgets {
     );
   }
 
-  static Widget buildErrorState(BuildContext context, Object error, ReaderThemeData theme) {
+  static Widget buildErrorState(
+    BuildContext context,
+    Object error,
+    ReaderThemeData theme,
+  ) {
     return Container(
       color: theme.backgroundColor,
       child: SafeArea(
@@ -131,8 +149,13 @@ class ReaderErrorWidgets {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.textColor,
                     foregroundColor: theme.backgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
@@ -169,7 +192,11 @@ class ReaderErrorWidgets {
           const SizedBox(height: 16),
           Text(
             'خطأ في تحميل المحتوى',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.textColor),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: theme.textColor,
+            ),
             textDirection: TextDirection.rtl,
           ),
           const SizedBox(height: 8),

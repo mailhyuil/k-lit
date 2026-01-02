@@ -28,7 +28,7 @@ class PageSplitter {
     for (int i = 0; i < words.length; i++) {
       final word = words[i];
       final testBuffer = StringBuffer(buffer.toString());
-      
+
       if (testBuffer.isNotEmpty) {
         testBuffer.write(' ');
       }
@@ -65,4 +65,3 @@ class PageSplitter {
     return pages.isEmpty ? [''] : pages;
   }
 }
-

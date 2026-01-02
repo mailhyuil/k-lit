@@ -27,18 +27,13 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     final searchState = ref.watch(searchControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('검색'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('검색'), centerTitle: true),
       body: Column(
         children: [
           // 검색 입력
           _buildSearchBar(),
           // 검색 결과
-          Expanded(
-            child: _buildSearchResults(searchState),
-          ),
+          Expanded(child: _buildSearchResults(searchState)),
         ],
       ),
     );
@@ -62,9 +57,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   },
                 )
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         onChanged: (value) {
           ref.read(searchControllerProvider.notifier).updateQuery(value);
@@ -115,18 +108,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           const SizedBox(height: 16),
           Text(
             '컬렉션 또는 작품을 검색하세요',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 8),
           Text(
             '제목, 설명, 작품 내용으로 검색 가능',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],
       ),
@@ -142,18 +129,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           const SizedBox(height: 16),
           Text(
             '검색 결과가 없습니다',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 8),
           Text(
             '"$query"',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ],
@@ -170,10 +151,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            const Text(
-              '검색 중 오류가 발생했습니다',
-              style: TextStyle(fontSize: 16),
-            ),
+            const Text('검색 중 오류가 발생했습니다', style: TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
             Text(
               error,
@@ -326,4 +304,3 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     }
   }
 }
-

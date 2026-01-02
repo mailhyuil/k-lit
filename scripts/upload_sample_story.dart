@@ -16,16 +16,15 @@ Future<void> main() async {
   }
 
   // Initialize Supabase client
-  await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
-  );
+  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
 
   final supabase = Supabase.instance.client;
   const bucket = 'story-contents';
 
   // Define file paths
-  final contentFile = File('supabase/sample_contents/arabic/lucky_day/content.txt');
+  final contentFile = File(
+    'supabase/sample_contents/arabic/lucky_day/content.txt',
+  );
   final metaFile = File('supabase/sample_contents/arabic/lucky_day/_meta.json');
 
   final remoteContentPath = 'arabic/lucky_day/content.txt';
@@ -35,7 +34,9 @@ Future<void> main() async {
   try {
     print('Uploading content.txt...');
     final content = await contentFile.readAsString();
-    await supabase.storage.from(bucket).upload(
+    await supabase.storage
+        .from(bucket)
+        .upload(
           remoteContentPath,
           contentFile,
           fileOptions: const FileOptions(
@@ -52,7 +53,9 @@ Future<void> main() async {
   // --- Upload _meta.json ---
   try {
     print('Uploading _meta.json...');
-    await supabase.storage.from(bucket).upload(
+    await supabase.storage
+        .from(bucket)
+        .upload(
           remoteMetaPath,
           metaFile,
           fileOptions: const FileOptions(

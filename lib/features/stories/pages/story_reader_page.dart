@@ -3,10 +3,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:k_lit/core/config/supabase_client.dart';
 import 'package:k_lit/core/theme/reader_theme.dart';
 import 'package:k_lit/core/theme/reader_theme_provider.dart';
-import 'package:k_lit/features/auth/providers/auth_providers.dart';
 import 'package:k_lit/features/entitlements/providers/entitlement_provider.dart';
 import 'package:k_lit/features/stories/pagination/text_paginator.dart';
 import 'package:k_lit/features/stories/providers/story_content_provider.dart';
@@ -14,6 +12,7 @@ import 'package:k_lit/features/stories/providers/story_provider.dart';
 import 'package:k_lit/features/stories/widgets/story_reader/reader_app_bar.dart';
 import 'package:k_lit/features/stories/widgets/story_reader/reader_error_widgets.dart';
 import 'package:k_lit/features/stories/widgets/story_reader/reader_page_content.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryReaderPage extends ConsumerStatefulWidget {
   final String storyId;
@@ -28,7 +27,6 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   TextPaginator? _paginator;
 
   bool _showControls = false;
-  bool _isCompleted = false;
 
   late ReaderThemeData _displayTheme;
 
@@ -39,17 +37,20 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
   bool _isPaginating = false;
   bool _paginationDone = false;
   Timer? _debounce;
+  Timer? _saveProgressDebounce;
 
   @override
   void initState() {
     super.initState();
     _displayTheme = ref.read(readerThemeProvider);
-    _pageController = PageController();
+    _loadReadingProgress();
+    _pageController = PageController(initialPage: _currentPage);
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
+    _saveProgressDebounce?.cancel();
     _paginator?.cancel();
     _pageController.dispose();
     super.dispose();
@@ -67,11 +68,16 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       backgroundColor: _displayTheme.backgroundColor,
       body: storyAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
+        error: (e, _) =>
+            ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
         data: (story) {
-          if (story == null) return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
+                    if (story == null) {
+                      return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
+                    }
 
-          final entAsync = ref.watch(hasEntitlementByStoryIdProvider(widget.storyId));
+          final entAsync = ref.watch(
+            hasEntitlementByStoryIdProvider(widget.storyId),
+          );
           final hasEntitlement = entAsync.value ?? false;
 
           if (story.isLocked && !story.isFree && !hasEntitlement) {
@@ -80,13 +86,17 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
           final contentAsync = ref.watch(storyContentProvider(widget.storyId));
           return contentAsync.when(
-            loading: () => ReaderErrorWidgets.buildContentLoading(_displayTheme),
-            error: (e, _) => ReaderErrorWidgets.buildContentError(e, _displayTheme),
+            loading: () =>
+                ReaderErrorWidgets.buildContentLoading(_displayTheme),
+            error: (e, _) =>
+                ReaderErrorWidgets.buildContentError(e, _displayTheme),
             data: (storyContent) {
               final fullText = story.getFullContent(storyContent.bodyAr);
 
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (!mounted) return;
+                if (!mounted) {
+                  return;
+                }
                 if (_pages.isEmpty && !_isPaginating) {
                   _startPaginate(fullText, keepIndex: _currentPage);
                 }
@@ -159,7 +169,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       _estimatedTotalPages = _pages.length;
     });
 
-    if (_pageController.hasClients && _pageController.page?.round() != _currentPage) {
+    if (_pageController.hasClients &&
+        _pageController.page?.round() != _currentPage) {
       _pageController.jumpToPage(_currentPage);
     }
   }
@@ -172,12 +183,29 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     return text.replaceAll('\n', '\n$extraNewlines');
   }
 
+  Future<void> _loadReadingProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedPage = prefs.getInt('story_${widget.storyId}_last_page');
+    if (savedPage != null) {
+      setState(() {
+        _currentPage = savedPage;
+      });
+    }
+  }
+
+  void _saveReadingProgress(int page) {
+    _saveProgressDebounce?.cancel();
+    _saveProgressDebounce = Timer(const Duration(seconds: 1), () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('story_${widget.storyId}_last_page', page);
+    });
+  }
+
   Widget _buildReader(BuildContext context) {
     final hasPages = _pages.isNotEmpty;
     final totalLabel = _paginationDone
         ? _pages.length.toString()
         : (_estimatedTotalPages?.toString() ?? '?');
-    final isLastPage = _paginationDone && hasPages && _currentPage == _pages.length - 1;
 
     return Stack(
       children: [
@@ -186,15 +214,21 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
           child: PageView.builder(
             controller: _pageController,
             itemCount: math.max(1, _pages.length),
-            onPageChanged: (i) => setState(() => _currentPage = i),
+            onPageChanged: (i) {
+              setState(() => _currentPage = i);
+              _saveReadingProgress(i);
+            },
             itemBuilder: (context, index) {
               if (_pages.isEmpty) {
-                return Center(child: CircularProgressIndicator(color: _displayTheme.textColor));
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: _displayTheme.textColor,
+                  ),
+                );
               }
-              return _PageTurn(
-                controller: _pageController,
-                index: index,
-                child: ReaderPageContent(pageText: _pages[index], theme: _displayTheme),
+              return ReaderPageContent(
+                pageText: _pages[index],
+                theme: _displayTheme,
               );
             },
           ),
@@ -202,7 +236,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
         Row(
           children: [
             Expanded(
-              child: GestureDetector(onTap: _previousPage, behavior: HitTestBehavior.translucent),
+              child: GestureDetector(
+                onTap: _previousPage,
+                behavior: HitTestBehavior.translucent,
+              ),
             ),
             Expanded(
               child: GestureDetector(
@@ -211,7 +248,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               ),
             ),
             Expanded(
-              child: GestureDetector(onTap: _nextPage, behavior: HitTestBehavior.translucent),
+              child: GestureDetector(
+                onTap: _nextPage,
+                behavior: HitTestBehavior.translucent,
+              ),
             ),
           ],
         ),
@@ -223,7 +263,10 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withAlpha((255 * 0.7).round()),
                   borderRadius: BorderRadius.circular(24),
@@ -249,55 +292,9 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 color: Colors.black.withAlpha((255 * 0.55).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text('reflow...', style: TextStyle(color: Colors.white, fontSize: 12)),
-            ),
-          ),
-        if (isLastPage && !_isCompleted)
-          Positioned(
-            bottom: 80,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: ElevatedButton.icon(
-                onPressed: _completeReading,
-                icon: const Icon(Icons.check_circle),
-                label: const Text('읽기 완료'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _displayTheme.textColor,
-                  foregroundColor: _displayTheme.backgroundColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                ),
-              ),
-            ),
-          ),
-        if (_isCompleted)
-          Positioned(
-            bottom: 80,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade700,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check_circle, color: Colors.white, size: 20),
-                    SizedBox(width: 8),
-                    Text(
-                      '읽기 완료!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              child: const Text(
+                'reflow...',
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -322,55 +319,5 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
         curve: Curves.easeOutCubic,
       );
     }
-  }
-
-  void _completeReading() {
-    setState(() => _isCompleted = true);
-    final user = ref.read(currentUserProvider);
-    if (user != null) {
-      SupabaseService.instance.client.from('reading_progress').upsert({
-        'user_id': user.id,
-        'story_id': widget.storyId,
-        'completed': true,
-        'completed_at': DateTime.now().toIso8601String(),
-      });
-    }
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) Navigator.of(context).pop();
-    });
-  }
-}
-
-class _PageTurn extends StatelessWidget {
-  final PageController controller;
-  final int index;
-  final Widget child;
-  const _PageTurn({required this.controller, required this.index, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        double page = 0.0;
-        try {
-          page = controller.hasClients
-              ? (controller.page ?? controller.initialPage.toDouble())
-              : 0.0;
-        } catch (_) {
-          page = 0.0;
-        }
-        final delta = (page - index).clamp(-1.0, 1.0);
-        final angle = delta * 0.6;
-
-        return Transform(
-          alignment: delta > 0 ? Alignment.centerLeft : Alignment.centerRight,
-          transform: Matrix4.identity()
-            ..setEntry(3, 2, 0.0015)
-            ..rotateY(angle),
-          child: child,
-        );
-      },
-    );
   }
 }

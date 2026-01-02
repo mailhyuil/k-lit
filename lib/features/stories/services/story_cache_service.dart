@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/story_content.dart';
 
 /// 작품 콘텐츠 로컬 캐시 관리 서비스
-/// 
+///
 /// 캐시 구조 (Storage와 동일한 구조):
 /// ```
 /// {app_dir}/story_cache/
@@ -23,11 +23,11 @@ class StoryCacheService {
   Future<String> _getCacheDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
     final cacheDir = Directory('${appDir.path}/$_cacheDirectory');
-    
+
     if (!await cacheDir.exists()) {
       await cacheDir.create(recursive: true);
     }
-    
+
     return cacheDir.path;
   }
 
@@ -54,18 +54,20 @@ class StoryCacheService {
     try {
       final metadataPath = await _getMetadataPath();
       final file = File(metadataPath);
-      
+
       if (!await file.exists()) {
         return {};
       }
 
       final jsonString = await file.readAsString();
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      
-      return json.map((key, value) => MapEntry(
-        key,
-        CachedContentMetadata.fromJson(value as Map<String, dynamic>),
-      ));
+
+      return json.map(
+        (key, value) => MapEntry(
+          key,
+          CachedContentMetadata.fromJson(value as Map<String, dynamic>),
+        ),
+      );
     } catch (e) {
       debugPrint('❌ Failed to load cache metadata: $e');
       return {};
@@ -73,14 +75,16 @@ class StoryCacheService {
   }
 
   /// 캐시 메타데이터 저장
-  Future<void> _saveMetadata(Map<String, CachedContentMetadata> metadata) async {
+  Future<void> _saveMetadata(
+    Map<String, CachedContentMetadata> metadata,
+  ) async {
     try {
       final metadataPath = await _getMetadataPath();
       final file = File(metadataPath);
-      
+
       final json = metadata.map((key, value) => MapEntry(key, value.toJson()));
       final jsonString = jsonEncode(json);
-      
+
       await file.writeAsString(jsonString);
       debugPrint('✅ Cache metadata saved');
     } catch (e) {
@@ -93,15 +97,14 @@ class StoryCacheService {
     try {
       final metadata = await _loadMetadata();
       final cached = metadata[storyId];
-      
+
       if (cached == null) return false;
       if (cached.version != version) return false;
-      
+
       final contentPath = await _getContentPath(storyId);
       final metaPath = await _getMetaPath(storyId);
-      
-      return await File(contentPath).exists() && 
-             await File(metaPath).exists();
+
+      return await File(contentPath).exists() && await File(metaPath).exists();
     } catch (e) {
       debugPrint('❌ Failed to check cache: $e');
       return false;
@@ -122,10 +125,12 @@ class StoryCacheService {
       final metaFile = File(metaPath);
       final metaString = await metaFile.readAsString();
       final meta = StoryMeta.fromJsonString(metaString);
-      
+
       // 버전 확인
       if (meta.version != version) {
-        debugPrint('⚠️ Cache version mismatch: expected $version, got ${meta.version}');
+        debugPrint(
+          '⚠️ Cache version mismatch: expected $version, got ${meta.version}',
+        );
         return null;
       }
 
@@ -133,10 +138,10 @@ class StoryCacheService {
       final contentPath = await _getContentPath(storyId);
       final contentFile = File(contentPath);
       final bodyText = await contentFile.readAsString();
-      
+
       final content = StoryContent.fromText(bodyText, meta.version);
       debugPrint('✅ Content loaded from cache: $storyId');
-      
+
       return content;
     } catch (e) {
       debugPrint('❌ Failed to get cached content: $e');
@@ -155,13 +160,13 @@ class StoryCacheService {
       final contentPath = await _getContentPath(storyId);
       final contentFile = File(contentPath);
       await contentFile.writeAsString(content.toText());
-      
+
       // 2. 메타 파일 저장
       final metaPath = await _getMetaPath(storyId);
       final metaFile = File(metaPath);
       final meta = StoryMeta(version: version);
       await metaFile.writeAsString(meta.toJsonString());
-      
+
       // 3. 캐시 메타데이터 업데이트
       final metadata = await _loadMetadata();
       metadata[storyId] = CachedContentMetadata(
@@ -170,11 +175,11 @@ class StoryCacheService {
         cachedAt: DateTime.now(),
         sizeBytes: content.toText().length,
       );
-      
+
       await _saveMetadata(metadata);
-      
+
       debugPrint('✅ Content saved to cache: $storyId (version: $version)');
-      
+
       // 4. 캐시 크기 확인 및 정리
       await _cleanupIfNeeded();
     } catch (e) {
@@ -187,23 +192,23 @@ class StoryCacheService {
     try {
       final contentPath = await _getContentPath(storyId);
       final metaPath = await _getMetaPath(storyId);
-      
+
       final contentFile = File(contentPath);
       final metaFile = File(metaPath);
-      
+
       if (await contentFile.exists()) {
         await contentFile.delete();
       }
-      
+
       if (await metaFile.exists()) {
         await metaFile.delete();
       }
-      
+
       // 메타데이터에서 제거
       final metadata = await _loadMetadata();
       metadata.remove(storyId);
       await _saveMetadata(metadata);
-      
+
       debugPrint('✅ Cache deleted: $storyId');
     } catch (e) {
       debugPrint('❌ Failed to delete cache: $e');
@@ -215,12 +220,12 @@ class StoryCacheService {
     try {
       final cacheDir = await _getCacheDirectory();
       final directory = Directory(cacheDir);
-      
+
       if (await directory.exists()) {
         await directory.delete(recursive: true);
         await directory.create();
       }
-      
+
       debugPrint('✅ All cache cleared');
     } catch (e) {
       debugPrint('❌ Failed to clear cache: $e');
@@ -232,18 +237,18 @@ class StoryCacheService {
     try {
       final cacheDir = await _getCacheDirectory();
       final directory = Directory(cacheDir);
-      
+
       if (!await directory.exists()) {
         return 0;
       }
-      
+
       int totalSize = 0;
       await for (final entity in directory.list(recursive: true)) {
         if (entity is File) {
           totalSize += await entity.length();
         }
       }
-      
+
       return totalSize;
     } catch (e) {
       debugPrint('❌ Failed to get cache size: $e');
@@ -255,31 +260,31 @@ class StoryCacheService {
   Future<void> _cleanupIfNeeded() async {
     try {
       final cacheSize = await getCacheSize();
-      
+
       if (cacheSize <= _maxCacheSizeBytes) {
         return;
       }
-      
+
       debugPrint('⚠️ Cache size exceeded: ${cacheSize / 1024 / 1024} MB');
-      
+
       // LRU: 가장 오래된 캐시부터 삭제
       final metadata = await _loadMetadata();
       final sorted = metadata.entries.toList()
         ..sort((a, b) => a.value.cachedAt.compareTo(b.value.cachedAt));
-      
+
       // 목표 크기에 도달할 때까지 삭제
       final targetSize = _maxCacheSizeBytes * 0.8; // 80%까지 정리
       int currentSize = cacheSize;
-      
+
       for (final entry in sorted) {
         if (currentSize <= targetSize) break;
-        
+
         await deleteStory(entry.key);
         currentSize -= entry.value.sizeBytes;
-        
+
         debugPrint('🗑️ Cleaned up: ${entry.key}');
       }
-      
+
       debugPrint('✅ Cache cleanup completed');
     } catch (e) {
       debugPrint('❌ Failed to cleanup cache: $e');
@@ -291,13 +296,14 @@ class StoryCacheService {
     try {
       final metadata = await _loadMetadata();
       final cacheSize = await getCacheSize();
-      
+
       return {
         'total_stories': metadata.length,
         'total_size_bytes': cacheSize,
         'total_size_mb': (cacheSize / 1024 / 1024).toStringAsFixed(2),
         'max_size_mb': (_maxCacheSizeBytes / 1024 / 1024).toStringAsFixed(0),
-        'usage_percent': ((cacheSize / _maxCacheSizeBytes) * 100).toStringAsFixed(1),
+        'usage_percent': ((cacheSize / _maxCacheSizeBytes) * 100)
+            .toStringAsFixed(1),
       };
     } catch (e) {
       debugPrint('❌ Failed to get cache stats: $e');
