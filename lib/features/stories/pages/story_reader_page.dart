@@ -84,16 +84,13 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       backgroundColor: _displayTheme.backgroundColor,
       body: storyAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) =>
-            ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
+        error: (e, _) => ReaderErrorWidgets.buildErrorState(context, e, _displayTheme),
         data: (story) {
           if (story == null) {
             return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
           }
 
-          final entAsync = ref.watch(
-            hasEntitlementByStoryIdProvider(widget.storyId),
-          );
+          final entAsync = ref.watch(hasEntitlementByStoryIdProvider(widget.storyId));
           final hasEntitlement = entAsync.value ?? false;
 
           if (story.isLocked && !story.isFree && !hasEntitlement) {
@@ -102,10 +99,8 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
 
           final contentAsync = ref.watch(storyContentProvider(widget.storyId));
           return contentAsync.when(
-            loading: () =>
-                ReaderErrorWidgets.buildContentLoading(_displayTheme),
-            error: (e, _) =>
-                ReaderErrorWidgets.buildContentError(e, _displayTheme),
+            loading: () => ReaderErrorWidgets.buildContentLoading(_displayTheme),
+            error: (e, _) => ReaderErrorWidgets.buildContentError(e, _displayTheme),
             data: (storyContent) {
               final fullText = story.getFullContent(storyContent.bodyAr);
 
@@ -185,8 +180,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       _estimatedTotalPages = _pages.length;
     });
 
-    if (_pageController.hasClients &&
-        _pageController.page?.round() != _currentPage) {
+    if (_pageController.hasClients && _pageController.page?.round() != _currentPage) {
       _pageController.jumpToPage(_currentPage);
     }
   }
@@ -236,26 +230,16 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             },
             itemBuilder: (context, index) {
               if (_pages.isEmpty) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: _displayTheme.textColor,
-                  ),
-                );
+                return Center(child: CircularProgressIndicator(color: _displayTheme.textColor));
               }
-              return ReaderPageContent(
-                pageText: _pages[index],
-                theme: _displayTheme,
-              );
+              return ReaderPageContent(pageText: _pages[index], theme: _displayTheme);
             },
           ),
         ),
         Row(
           children: [
             Expanded(
-              child: GestureDetector(
-                onTap: _previousPage,
-                behavior: HitTestBehavior.translucent,
-              ),
+              child: GestureDetector(onTap: _previousPage, behavior: HitTestBehavior.translucent),
             ),
             Expanded(
               child: GestureDetector(
@@ -264,10 +248,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
               ),
             ),
             Expanded(
-              child: GestureDetector(
-                onTap: _nextPage,
-                behavior: HitTestBehavior.translucent,
-              ),
+              child: GestureDetector(onTap: _nextPage, behavior: HitTestBehavior.translucent),
             ),
           ],
         ),
@@ -279,10 +260,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.black.withAlpha((255 * 0.7).round()),
                   borderRadius: BorderRadius.circular(24),
@@ -308,10 +286,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
                 color: Colors.black.withAlpha((255 * 0.55).round()),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'reflow...',
-                style: TextStyle(color: Colors.white, fontSize: 12),
-              ),
+              child: const Text('reflow...', style: TextStyle(color: Colors.white, fontSize: 12)),
             ),
           ),
       ],
