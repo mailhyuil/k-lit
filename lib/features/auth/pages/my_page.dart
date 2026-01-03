@@ -17,7 +17,12 @@ class MyPage extends ConsumerWidget {
     final purchasedCollectionsAsync = ref.watch(purchasedCollectionsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('마이 페이지'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('마이 페이지'),
+        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(profileProvider);

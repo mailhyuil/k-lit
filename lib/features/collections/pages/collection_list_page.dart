@@ -20,7 +20,12 @@ class CollectionListPage extends ConsumerWidget {
     final collectionsAsync = ref.watch(collectionsWithStatusProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('컬렉션'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('컬렉션'),
+        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(collectionsWithStatusProvider.future),
         child: collectionsAsync.when(
