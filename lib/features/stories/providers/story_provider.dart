@@ -54,13 +54,10 @@ final storyProvider = FutureProvider.family<Story?, String>((
 
 /// 무료 작품 목록을 제공하는 프로바이더 (Supabase)
 final freeStoriesProvider = FutureProvider<List<Story>>((ref) async {
-  final response = await SupabaseService.instance.client
+  final List response = await SupabaseService.instance.client
       .from('stories')
-      .select()
+      .select('*, story_collections!inner(collection_id)')
       .eq('is_free', true)
       .order('order_index', ascending: true);
-
-  return (response as List)
-      .map((map) => Story.fromMap(map as Map<String, dynamic>))
-      .toList();
+  return response.map((map) => Story.fromMap(map)).toList();
 });

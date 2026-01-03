@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 
 import '../../../core/config/supabase_client.dart';
+import '../../purchase/providers/purchase_provider.dart';
 import '../models/collection.dart';
 
 /// 모든 컬렉션 목록을 제공하는 프로바이더 (Supabase)
