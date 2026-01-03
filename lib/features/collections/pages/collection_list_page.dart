@@ -15,7 +15,6 @@ class CollectionListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final purchase = ref.watch(purchaseControllerProvider);
     if (!purchase.ready) {
-      //TODO: SplashView 로 변경
       return const Center(child: CircularProgressIndicator()); // 로딩/스플래시
     }
     final collectionsAsync = ref.watch(collectionsWithStatusProvider);
