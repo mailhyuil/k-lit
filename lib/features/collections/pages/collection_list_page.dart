@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../models/collection.dart';
 import '../providers/collection_provider.dart';
@@ -13,15 +14,15 @@ class CollectionListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final purchase = ref.watch(purchaseControllerProvider);
     if (!purchase.ready) {
       return const Center(child: CircularProgressIndicator()); // 로딩/스플래시
     }
     final collectionsAsync = ref.watch(collectionsWithStatusProvider);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('컬렉션'),
+        title: Text(t.collections),
         titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,

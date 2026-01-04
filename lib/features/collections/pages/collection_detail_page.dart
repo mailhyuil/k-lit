@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/features/collections/models/collection.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/features/purchase/widgets/story_detail_dialog.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../../stories/models/story.dart';
 import '../../stories/pages/story_reader_page.dart';
@@ -17,6 +18,7 @@ class CollectionDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final collectionAsync = ref.watch(collectionByIdProvider(collectionId));
     final storiesAsync = ref.watch(collectionStoriesProvider(collectionId));
     final purchaseController = ref.read(purchaseControllerProvider.notifier);
@@ -36,7 +38,7 @@ class CollectionDetailPage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    '작품 목록',
+                    t.storyList,
                     style: Theme.of(
                       context,
                     ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
