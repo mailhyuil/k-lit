@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/features/collections/models/collection.dart';
-import 'package:k_lit/features/collections/widgets/story_detail_dialog.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
+import 'package:k_lit/features/purchase/widgets/story_detail_dialog.dart';
 
 import '../../stories/models/story.dart';
 import '../../stories/pages/story_reader_page.dart';
