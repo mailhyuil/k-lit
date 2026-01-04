@@ -191,7 +191,7 @@ class CollectionDetailPage extends ConsumerWidget {
         final canRead = hasAccess || story.isFree;
 
         return ListTile(
-          leading: CircleAvatar(child: Text('${index + 1}')),
+          leading: CircleAvatar(radius: 20, child: Text('${index + 1}')),
           title: Text(
             story.titleAr,
             textDirection: TextDirection.rtl,
