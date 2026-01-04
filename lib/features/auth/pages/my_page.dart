@@ -18,9 +18,7 @@ class MyPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('마이 페이지'),
-        titleTextStyle: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(color: Colors.white),
+        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -35,19 +33,26 @@ class MyPage extends ConsumerWidget {
             // 구매한 컬렉션 섹션 헤더
             Text(
               '구매한 컬렉션',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // 구매한 컬렉션 목록
             _buildPurchasedCollections(context, ref, purchasedCollectionsAsync),
-            const SizedBox(height: 24),
-            const Divider(),
-            const SizedBox(height: 24),
-            // 로그아웃 버튼
-            _buildLogoutSection(context, ref),
           ],
+        ),
+      ),
+      // 로그아웃 버튼
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(),
+              const SizedBox(height: 12),
+              _buildLogoutSection(context, ref),
+            ],
+          ),
         ),
       ),
     );
@@ -82,8 +87,7 @@ class MyPage extends ConsumerWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CollectionDetailPage(collectionId: collection.id),
+                    builder: (context) => CollectionDetailPage(collectionId: collection.id),
                   ),
                 );
               },
@@ -92,19 +96,12 @@ class MyPage extends ConsumerWidget {
         );
       },
       loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: CircularProgressIndicator(),
-        ),
+        child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Center(
         child: Column(
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
               '컬렉션을 불러오는 중 오류가 발생했습니다',
@@ -130,16 +127,9 @@ class MyPage extends ConsumerWidget {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Icon(
-              Icons.collections_bookmark_outlined,
-              size: 64,
-              color: Colors.grey.shade400,
-            ),
+            Icon(Icons.collections_bookmark_outlined, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
-            Text(
-              '구매한 컬렉션이 없습니다',
-              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-            ),
+            Text('구매한 컬렉션이 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
             const SizedBox(height: 16),
           ],
         ),
@@ -153,9 +143,7 @@ class MyPage extends ConsumerWidget {
 
     return Center(
       child: ElevatedButton.icon(
-        onPressed: authState.isLoading
-            ? null
-            : () => _showLogoutDialog(context, ref),
+        onPressed: authState.isLoading ? null : () => _showLogoutDialog(context, ref),
         icon: const Icon(Icons.logout, color: Colors.white),
         label: const Text(
           '로그아웃',
@@ -177,15 +165,10 @@ class MyPage extends ConsumerWidget {
         title: const Text('로그아웃'),
         content: const Text('정말 로그아웃하시겠습니까?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('취소'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('취소')),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: const Text('로그아웃'),
           ),
         ],
