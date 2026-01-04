@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/features/collections/models/collection.dart';
+import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
+import 'package:k_lit/features/purchase/widgets/story_detail_dialog.dart';
 
-import '../../purchase/widgets/purchase_dialog.dart';
 import '../../stories/models/story.dart';
 import '../../stories/pages/story_reader_page.dart';
 import '../../stories/providers/story_provider.dart';
@@ -17,6 +19,7 @@ class CollectionDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final collectionAsync = ref.watch(collectionByIdProvider(collectionId));
     final storiesAsync = ref.watch(collectionStoriesProvider(collectionId));
+    final purchaseController = ref.read(purchaseControllerProvider.notifier);
     return Scaffold(
       body: collectionAsync.when(
         data: (collection) {
@@ -27,7 +30,11 @@ class CollectionDetailPage extends ConsumerWidget {
             slivers: [
               _buildAppBar(context, collection),
               SliverToBoxAdapter(
-                child: _buildCollectionInfo(context, collection),
+                child: _buildCollectionInfo(
+                  context,
+                  collection,
+                  purchaseController,
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -46,6 +53,7 @@ class CollectionDetailPage extends ConsumerWidget {
                   ref,
                   stories,
                   collection.isPurchased || collection.isFree,
+                  collection,
                 ),
                 loading: () => const SliverToBoxAdapter(
                   child: Center(
@@ -127,7 +135,11 @@ class CollectionDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCollectionInfo(BuildContext context, dynamic collection) {
+  Widget _buildCollectionInfo(
+    BuildContext context,
+    Collection collection,
+    PurchaseController purchaseController,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -166,9 +178,10 @@ class CollectionDetailPage extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => _handlePurchase(context, collection),
+                onPressed: () =>
+                    purchaseController.handlePurchase(context, collection),
                 icon: const Icon(Icons.shopping_cart),
-                label: Text('컬렉션 구매 (\$2.99)'),
+                label: Text('컬렉션 구매 (\$${collection.price})'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -184,6 +197,7 @@ class CollectionDetailPage extends ConsumerWidget {
     WidgetRef ref,
     List<Story> stories,
     bool hasAccess,
+    Collection collection,
   ) {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
@@ -191,7 +205,7 @@ class CollectionDetailPage extends ConsumerWidget {
         final canRead = hasAccess || story.isFree;
 
         return ListTile(
-          leading: CircleAvatar(radius: 20, child: Text('${index + 1}')),
+          leading: CircleAvatar(child: Text('${index + 1}')),
           title: Text(
             story.titleAr,
             textDirection: TextDirection.rtl,
@@ -214,7 +228,7 @@ class CollectionDetailPage extends ConsumerWidget {
                     ),
                   );
                 }
-              : () => _showLockMessage(context),
+              : () => _showStoryDetailDialog(context, story, collection),
         );
       }, childCount: stories.length),
     );
@@ -249,26 +263,24 @@ class CollectionDetailPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _handlePurchase(BuildContext context, dynamic collection) async {
-    // RevenueCat 구매 다이얼로그 표시
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => PurchaseDialog(collection: collection),
-    );
-
-    // 구매 성공 시 페이지 새로고침
-    if (result == true && context.mounted) {
-      // 컬렉션 목록 새로고침
-      // ref는 build 메서드에서만 사용 가능하므로 여기서는 별도 처리 불필요
-    }
-  }
-
-  void _showLockMessage(BuildContext context) {
+  void _showLockSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('이 작품을 읽으려면 컬렉션을 구매해야 합니다'),
         duration: Duration(seconds: 2),
       ),
+    );
+  }
+
+  void _showStoryDetailDialog(
+    BuildContext context,
+    Story story,
+    Collection collection,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          StoryDetailDialog(story: story, collection: collection),
     );
   }
 }
