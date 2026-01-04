@@ -33,7 +33,6 @@ class PurchaseDialog extends ConsumerWidget {
                     Theme.of(context).colorScheme.secondary,
                   ],
                 ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 children: [

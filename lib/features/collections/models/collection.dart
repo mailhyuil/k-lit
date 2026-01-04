@@ -7,7 +7,7 @@ class Collection {
   final String titleAr; // 아랍어 제목
   final String? descriptionAr; // 아랍어 설명
   final String? coverPath; // Supabase Storage 경로
-  final String priceTier; // 'free', 'tier1', 'tier2', etc.
+  final double price; // 'free', 'tier1', 'tier2', etc.
   final String? rcIdentifier; // RevenueCat 식별자
   final bool isFree; // 무료 여부
   final int orderIndex; // 정렬 순서
@@ -23,7 +23,7 @@ class Collection {
     required this.titleAr,
     this.descriptionAr,
     this.coverPath,
-    required this.priceTier,
+    required this.price,
     required this.isFree,
     required this.orderIndex,
     required this.createdAt,
@@ -40,7 +40,7 @@ class Collection {
       titleAr: map['title_ar'] as String,
       descriptionAr: map['description_ar'] as String?,
       coverPath: map['cover_url'] as String?,
-      priceTier: map['price_tier'] as String? ?? 'free',
+      price: map['price'] as double? ?? 0,
       isFree: map['is_free'] as bool? ?? false,
       orderIndex: map['order_index'] as int? ?? 0,
       createdAt: DateTime.parse(map['created_at'] as String),
@@ -58,7 +58,7 @@ class Collection {
     String? titleAr,
     String? descriptionAr,
     String? coverPath,
-    String? priceTier,
+    double? price,
     bool? isFree,
     int? orderIndex,
     DateTime? createdAt,
@@ -72,7 +72,7 @@ class Collection {
       titleAr: titleAr ?? this.titleAr,
       descriptionAr: descriptionAr ?? this.descriptionAr,
       coverPath: coverPath ?? this.coverPath,
-      priceTier: priceTier ?? this.priceTier,
+      price: price ?? this.price,
       isFree: isFree ?? this.isFree,
       orderIndex: orderIndex ?? this.orderIndex,
       createdAt: createdAt ?? this.createdAt,

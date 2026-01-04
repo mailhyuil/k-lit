@@ -117,34 +117,41 @@ class CollectionCard extends StatelessWidget {
   }
 
   Widget _buildPriceBadge(BuildContext context) {
-    final price = _getPriceLabel();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        price,
-        style: TextStyle(
-          fontSize: 10,
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          fontWeight: FontWeight.w600,
+    final price = '\$${collection.price}';
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            '유료',
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-      ),
+        const SizedBox(width: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            price,
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
-  }
-
-  String _getPriceLabel() {
-    switch (collection.priceTier) {
-      case 'tier1':
-        return '\$2.99';
-      case 'tier2':
-        return '\$4.99';
-      case 'tier3':
-        return '\$9.99';
-      default:
-        return '유료';
-    }
   }
 }
