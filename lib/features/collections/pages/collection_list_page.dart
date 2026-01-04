@@ -23,8 +23,8 @@ class CollectionListPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('컬렉션'),
         titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
-        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(collectionsWithStatusProvider.future),

@@ -19,8 +19,8 @@ class MyPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('마이 페이지'),
         titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
-        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
