@@ -21,6 +21,7 @@ final appRouter = GoRouter(
         ),
       ],
     ),
+
     GoRoute(
       path: '/stories/:id',
       builder: (context, state) {

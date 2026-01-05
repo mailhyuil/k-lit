@@ -42,10 +42,7 @@ class AuthController extends Notifier<AuthState> {
     try {
       await SupabaseService.auth.signInWithOAuth(
         OAuthProvider.facebook,
-        redirectTo:
-            'com.mailhyuil.library://login-callback/', // Optionally set the redirect link to bring back the user via deeplink.
-        authScreenLaunchMode:
-            LaunchMode.externalApplication, // Launch the auth screen in a new webview on mobile.
+        redirectTo: SupabaseService.redirectUrl,
       );
       // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
       // 실제 인증 결과는 authStateProvider에서 감지됨
