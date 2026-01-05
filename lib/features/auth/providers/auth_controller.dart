@@ -51,16 +51,29 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
-  /// Email로 로그인
-  // Future<void> signInWithEmail() async {
-  //   state = state.copyWith(isLoading: true, error: null);
-  //   try {
-  //     await SupabaseService.auth.signInWithOAuth(
-  //       OAuthProvider.email,
-  //       redirectTo: SupabaseService.redirectUrl,
-  //     );
-  //   }
+  // /// Email로 sign up
+  // Future<void> signUpNewUser({
+  //   required String email,
+  //   required String password,
+  //   required String passwordConfirm,
+  // }) async {
+  //   final AuthResponse res = await SupabaseService.auth.signUp(
+  //     email: email,
+  //     password: password,
+  //   );
   // }
+
+  // /// Email로 sign in
+  // Future<void> signInWithEmail({
+  //   required String email,
+  //   required String password,
+  // }) async {
+  //   final AuthResponse res = await SupabaseService.auth.signInWithPassword(
+  //     email: email,
+  //     password: password,
+  //   );
+  // }
+
   /// Apple 로그인
   // Future<void> signInWithApple() async {
   //   state = state.copyWith(isLoading: true, error: null);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../providers/auth_controller.dart';
@@ -56,16 +55,14 @@ class LoginPage extends ConsumerWidget {
                     : () => authController.signInWithFacebook(),
                 isLoading: authState.isLoading,
               ),
-              const SizedBox(height: 16),
-              // Email로 로그인
-              _SocialLoginButton(
-                label: t.loginPageEmailLogin,
-                icon: Icons.email,
-                onPressed: authState.isLoading
-                    ? null
-                    : () => context.push('/email'),
-                isLoading: authState.isLoading,
-              ),
+              // const SizedBox(height: 16),
+              // // Email로 로그인
+              // _SocialLoginButton(
+              //   label: t.loginPageEmailLogin,
+              //   icon: Icons.email,
+              //   onPressed: () => context.push('/email-login'),
+              // ),
+
               // Apple 로그인 버튼
               // _SocialLoginButton(
               //   label: 'Apple로 로그인',
