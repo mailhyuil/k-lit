@@ -2,11 +2,14 @@
 ///
 /// DB: 제목, 서문(intro), 해설(commentary) - 미리보기용
 /// Storage: 본문(body) - 구입 후 다운로드
+
+typedef StoryCollection = ({String id, String? rcIdentifier});
+typedef StoryCollections = List<StoryCollection>;
+
 class Story {
   final String id;
-  final String collectionId; // 소속 컬렉션 ID
   final String titleAr; // 아랍어 제목
-
+  final StoryCollections collections;
   // DB에 저장 (미리보기용 - 무료 공개)
   final String? introAr; // 아랍어 서문
   final String? commentaryAr; // 아랍어 해설/주석
@@ -23,7 +26,7 @@ class Story {
 
   const Story({
     required this.id,
-    required this.collectionId,
+    required this.collections,
     required this.titleAr,
     this.introAr,
     this.commentaryAr,
@@ -38,9 +41,18 @@ class Story {
 
   /// Supabase에서 가져온 데이터를 모델로 변환
   factory Story.fromMap(Map<String, dynamic> map) {
+    final storyCollections = (map['story_collections'] as List<dynamic>).map((
+      sc,
+    ) {
+      final collection = sc['collections'] as Map<String, dynamic>;
+      return (
+        id: collection['id'] as String,
+        rcIdentifier: collection['rc_identifier'] as String?,
+      );
+    }).toList();
     return Story(
       id: map['id'] as String,
-      collectionId: map['story_collections'][0]['collection_id'] as String,
+      collections: storyCollections,
       titleAr: map['title_ar'] as String,
       introAr: map['intro_ar'] as String?,
       commentaryAr: map['commentary_ar'] as String?,
@@ -57,7 +69,7 @@ class Story {
   /// copyWith 메서드
   Story copyWith({
     String? id,
-    String? collectionId,
+    StoryCollections? collections,
     String? titleAr,
     String? introAr,
     String? commentaryAr,
@@ -71,7 +83,7 @@ class Story {
   }) {
     return Story(
       id: id ?? this.id,
-      collectionId: collectionId ?? this.collectionId,
+      collections: collections ?? this.collections,
       titleAr: titleAr ?? this.titleAr,
       introAr: introAr ?? this.introAr,
       commentaryAr: commentaryAr ?? this.commentaryAr,

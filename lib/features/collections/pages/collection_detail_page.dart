@@ -20,7 +20,7 @@ class CollectionDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;
     final collectionAsync = ref.watch(collectionByIdProvider(collectionId));
-    final storiesAsync = ref.watch(collectionStoriesProvider(collectionId));
+    final storiesAsync = ref.watch(storiesByCollectionIdProvider(collectionId));
     final purchaseController = ref.read(purchaseControllerProvider.notifier);
     return Scaffold(
       body: collectionAsync.when(

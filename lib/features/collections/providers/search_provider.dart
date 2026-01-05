@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 
 import '../../stories/models/story.dart';
 import '../../stories/providers/story_provider.dart';
@@ -51,7 +52,7 @@ class SearchResult {
       description: story.introAr,
       isFree: story.isFree,
       isPurchased: isPurchased,
-      collectionId: story.collectionId,
+      collectionId: story.collections.first.id,
     );
   }
 }
@@ -133,9 +134,11 @@ class SearchController extends Notifier<SearchState> {
           .map((c) => SearchResult.fromCollection(c))
           .toList();
 
-      // Story 검색 (무료 작품만 - intro와 commentary만 검색)
-      final freeStories = await ref.read(freeStoriesProvider.future);
-      final storyResults = freeStories
+      // Story 검색
+      final stories = await ref.read(storiesProvider.future);
+      // 구매여부 확인
+      final customerInfo = ref.read(customerInfoProvider);
+      final storyResults = stories
           .where(
             (s) =>
                 s.titleAr.toLowerCase().contains(lowerQuery) ||
@@ -143,8 +146,15 @@ class SearchController extends Notifier<SearchState> {
                 (s.commentaryAr?.toLowerCase().contains(lowerQuery) ?? false),
           )
           .map(
-            (s) => SearchResult.fromStory(s, isPurchased: true),
-          ) // 무료 작품은 항상 접근 가능
+            (s) => SearchResult.fromStory(
+              s,
+              isPurchased:
+                  customerInfo?.allPurchasedProductIdentifiers.contains(
+                    s.collections.first.rcIdentifier,
+                  ) ??
+                  false,
+            ),
+          )
           .toList();
 
       // 결과 결합 (Collection 우선)

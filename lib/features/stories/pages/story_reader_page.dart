@@ -77,7 +77,7 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
       _onThemeChange(next);
     });
 
-    final storyAsync = ref.watch(storyProvider(widget.storyId));
+    final storyAsync = ref.watch(storyByStoryIdProvider(widget.storyId));
     return Scaffold(
       backgroundColor: _displayTheme.backgroundColor,
       body: storyAsync.when(
@@ -125,7 +125,9 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
         .read(storyContentProvider(widget.storyId))
         .when(
           data: (content) {
-            final story = ref.read(storyProvider(widget.storyId)).value;
+            final story = ref
+                .read(storyByStoryIdProvider(widget.storyId))
+                .value;
             return story?.getFullContent(content.bodyAr) ?? '';
           },
           loading: () => '',

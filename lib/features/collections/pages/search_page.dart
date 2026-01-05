@@ -292,11 +292,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     switch (result.type) {
       case SearchResultType.collection:
         // 컬렉션 상세로 이동
-        context.go('/collections/${result.id}');
+        context.push('/collections/${result.id}');
         break;
       case SearchResultType.story:
         // 작품 읽기로 이동
-        context.go('/stories/${result.id}');
+        if (result.isPurchased || result.isFree) {
+          context.push('/stories/${result.id}');
+        } else {
+          context.push('/collections/${result.collectionId}');
+        }
         break;
     }
   }

@@ -18,12 +18,12 @@ final storyContentProvider = FutureProvider.family<StoryContent, String>((
   storyId,
 ) async {
   // Story 메타데이터 가져오기
-  final story = await ref.watch(storyProvider(storyId).future);
+  final story = await ref.watch(storyByStoryIdProvider(storyId).future);
   if (story == null) {
     throw Exception('Story not found');
   }
   final collection = await ref.watch(
-    collectionByIdProvider(story.collectionId).future,
+    collectionByIdProvider(story.collections.first.id).future,
   );
   if (collection == null) {
     throw Exception('Collection not found');
@@ -46,7 +46,9 @@ final storyContentProvider = FutureProvider.family<StoryContent, String>((
     if (!isPurchased) {
       throw Exception('이 작품을 읽으려면 컬렉션을 구매해야 합니다.');
     }
-    debugPrint('✅ Entitlement verified for collection: ${story.collectionId}');
+    debugPrint(
+      '✅ Entitlement verified for collection: ${story.collections.first.id}',
+    );
   }
 
   // 1단계: 캐시 확인
