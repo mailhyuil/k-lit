@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../../collections/models/collection.dart';
@@ -113,10 +114,7 @@ class PurchaseDialog extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('취소'),
-                    ),
+                    child: OutlinedButton(onPressed: () => context.pop(), child: const Text('취소')),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -243,7 +241,7 @@ class PurchaseDialog extends ConsumerWidget {
     if (success && context.mounted) {
       // TODO: purchase_provider에서 getCustomerInfo / purchasePackage를 통해서 권한 확인 후 UI 다시 그리기
 
-      Navigator.of(context).pop(true); // 구매 성공 결과 반환
+      context.pop(true); // 구매 성공 결과 반환
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../models/collection.dart';
 import '../providers/collection_provider.dart';
 import '../widgets/collection_card.dart';
-import 'collection_detail_page.dart';
 
 /// 컬렉션 목록 페이지
 class CollectionListPage extends ConsumerWidget {
@@ -99,11 +99,7 @@ class CollectionListPage extends ConsumerWidget {
         return CollectionCard(
           collection: collection,
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CollectionDetailPage(collectionId: collection.id),
-              ),
-            );
+            context.push('/collections/${collection.id}');
           },
         );
       },

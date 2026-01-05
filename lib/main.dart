@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/core/router/app_router.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
 import 'core/config/revenuecat_config.dart';
 import 'core/config/supabase_client.dart';
-import 'features/auth/widgets/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +48,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'K-LIT',
+      routerConfig: appRouter,
       theme: ThemeData(
         fontFamily: 'NotoNaskhArabic',
         colorScheme: ColorScheme.fromSeed(
@@ -73,7 +74,6 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('ar'), Locale('en'), Locale('ko')],
-      home: const AuthGate(),
     );
   }
 }

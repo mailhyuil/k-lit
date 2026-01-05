@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../providers/auth_controller.dart';
 
 /// 로그인 페이지
@@ -37,9 +39,7 @@ class LoginPage extends ConsumerWidget {
               _SocialLoginButton(
                 label: 'Google로 로그인',
                 icon: Icons.g_mobiledata,
-                onPressed: authState.isLoading
-                    ? null
-                    : () => authController.signInWithGoogle(),
+                onPressed: authState.isLoading ? null : () => authController.signInWithGoogle(),
                 isLoading: authState.isLoading,
               ),
               const SizedBox(height: 16),
@@ -48,22 +48,26 @@ class LoginPage extends ConsumerWidget {
               _SocialLoginButton(
                 label: 'Facebook으로 로그인',
                 icon: Icons.facebook,
-                onPressed: authState.isLoading
-                    ? null
-                    : () => authController.signInWithFacebook(),
+                onPressed: authState.isLoading ? null : () => authController.signInWithFacebook(),
                 isLoading: authState.isLoading,
               ),
               const SizedBox(height: 16),
-
-              // Apple 로그인 버튼
+              // Email로 로그인
               _SocialLoginButton(
-                label: 'Apple로 로그인',
-                icon: Icons.apple,
-                onPressed: authState.isLoading
-                    ? null
-                    : () => authController.signInWithApple(),
+                label: 'Email로 로그인',
+                icon: Icons.email,
+                onPressed: authState.isLoading ? null : () => context.push('/email'),
                 isLoading: authState.isLoading,
               ),
+              // Apple 로그인 버튼
+              // _SocialLoginButton(
+              //   label: 'Apple로 로그인',
+              //   icon: Icons.apple,
+              //   onPressed: authState.isLoading
+              //       ? null
+              //       : () => authController.signInWithApple(),
+              //   isLoading: authState.isLoading,
+              // ),
 
               // 에러 메시지
               if (authState.error != null) ...[
@@ -113,11 +117,7 @@ class _SocialLoginButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
+          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Icon(icon), const SizedBox(width: 8), Text(label)],

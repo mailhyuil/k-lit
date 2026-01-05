@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/features/stories/widgets/story_reader_settings.dart';
 
 class ReaderAppBar extends StatelessWidget {
@@ -26,7 +27,7 @@ class ReaderAppBar extends StatelessWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.pop(),
                 ),
                 const Spacer(),
                 IconButton(

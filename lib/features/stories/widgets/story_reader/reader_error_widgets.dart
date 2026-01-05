@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/core/theme/reader_theme.dart';
 
 class ReaderErrorWidgets {
@@ -22,7 +23,7 @@ class ReaderErrorWidgets {
               ),
               const SizedBox(height: 32),
               ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => context.pop(),
                 icon: const Icon(Icons.arrow_back),
                 label: const Text('돌아가기'),
                 style: ElevatedButton.styleFrom(
@@ -75,7 +76,7 @@ class ReaderErrorWidgets {
                 ),
                 const SizedBox(height: 48),
                 ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.pop(),
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('돌아가기'),
                   style: ElevatedButton.styleFrom(
@@ -125,7 +126,7 @@ class ReaderErrorWidgets {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => context.pop(),
                   icon: const Icon(Icons.arrow_back),
                   label: const Text('돌아가기'),
                   style: ElevatedButton.styleFrom(

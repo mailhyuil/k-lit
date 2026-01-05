@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
-import '../../collections/pages/collection_detail_page.dart';
 import '../../collections/providers/collection_provider.dart';
 import '../../collections/widgets/collection_card.dart';
 import '../providers/auth_controller.dart';
@@ -88,11 +88,7 @@ class MyPage extends ConsumerWidget {
             return CollectionCard(
               collection: collection,
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => CollectionDetailPage(collectionId: collection.id),
-                  ),
-                );
+                context.go('/collections/${collection.id}');
               },
             );
           },
@@ -168,9 +164,9 @@ class MyPage extends ConsumerWidget {
         title: const Text('로그아웃'),
         content: const Text('정말 로그아웃하시겠습니까?'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('취소')),
+          TextButton(onPressed: () => context.pop(false), child: const Text('취소')),
           FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => context.pop(true),
             style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
             child: const Text('로그아웃'),
           ),
@@ -183,7 +179,7 @@ class MyPage extends ConsumerWidget {
 
       // 로그아웃 후 LoginPage로 이동 (navigation stack 정리)
       if (context.mounted) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        context.go('/login');
       }
     }
   }

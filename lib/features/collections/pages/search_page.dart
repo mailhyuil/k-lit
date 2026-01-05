@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../stories/pages/story_reader_page.dart';
 import '../providers/search_provider.dart';
-import 'collection_detail_page.dart';
 
 /// 검색 페이지
 class SearchPage extends ConsumerStatefulWidget {
@@ -270,18 +269,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     switch (result.type) {
       case SearchResultType.collection:
         // 컬렉션 상세로 이동
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => CollectionDetailPage(collectionId: result.id)),
-        );
+        context.go('/collections/${result.id}');
         break;
       case SearchResultType.story:
         // 작품 읽기로 이동
         final hasAccess = result.isPurchased || result.isFree;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => StoryReaderPage(hasAccess: hasAccess, storyId: result.id),
-          ),
-        );
+        context.go('/stories/${result.id}?hasAccess=$hasAccess');
         break;
     }
   }

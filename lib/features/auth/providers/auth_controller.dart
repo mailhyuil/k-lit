@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -53,20 +54,30 @@ class AuthController extends Notifier<AuthState> {
     }
   }
 
+  /// Email로 로그인
+  // Future<void> signInWithEmail() async {
+  //   state = state.copyWith(isLoading: true, error: null);
+  //   try {
+  //     await SupabaseService.auth.signInWithOAuth(
+  //       OAuthProvider.email,
+  //       redirectTo: SupabaseService.redirectUrl,
+  //     );
+  //   }
+  // }
   /// Apple 로그인
-  Future<void> signInWithApple() async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      await SupabaseService.auth.signInWithOAuth(
-        OAuthProvider.apple,
-        redirectTo: SupabaseService.redirectUrl,
-      );
-      // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
-      // 실제 인증 결과는 authStateProvider에서 감지됨
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
-    }
-  }
+  // Future<void> signInWithApple() async {
+  //   state = state.copyWith(isLoading: true, error: null);
+  //   try {
+  //     await SupabaseService.auth.signInWithOAuth(
+  //       OAuthProvider.apple,
+  //       redirectTo: SupabaseService.redirectUrl,
+  //     );
+  //     // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
+  //     // 실제 인증 결과는 authStateProvider에서 감지됨
+  //   } catch (e) {
+  //     state = state.copyWith(isLoading: false, error: _getErrorMessage(e));
+  //   }
+  // }
 
   /// 로그아웃
   Future<void> signOut() async {
@@ -80,6 +91,7 @@ class AuthController extends Notifier<AuthState> {
   }
 
   String _getErrorMessage(dynamic error) {
+    debugPrint('error: $error');
     if (error is AuthException) {
       return '로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
     }

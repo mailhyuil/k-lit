@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/features/collections/models/collection.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/features/stories/models/story.dart';
@@ -48,14 +49,17 @@ class StoryDetailDialog extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => purchaseController.handlePurchase(context, collection),
+                        onPressed: () {
+                          context.pop();
+                          purchaseController.handlePurchase(context, collection);
+                        },
                         child: const Text('구매하기'),
                       ),
                     ),
                     SizedBox(width: 16),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () => context.pop(),
                         child: const Text('닫기'),
                       ),
                     ),

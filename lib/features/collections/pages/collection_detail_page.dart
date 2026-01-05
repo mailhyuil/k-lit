@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:k_lit/features/collections/models/collection.dart';
 import 'package:k_lit/features/purchase/providers/purchase_provider.dart';
 import 'package:k_lit/features/purchase/widgets/story_detail_dialog.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../../stories/models/story.dart';
-import '../../stories/pages/story_reader_page.dart';
 import '../../stories/providers/story_provider.dart';
 import '../providers/collection_provider.dart';
 
@@ -79,7 +79,7 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           const Text('컬렉션을 찾을 수 없습니다'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('돌아가기')),
+          ElevatedButton(onPressed: () => context.pop(), child: const Text('돌아가기')),
         ],
       ),
     );
@@ -206,12 +206,7 @@ class CollectionDetailPage extends ConsumerWidget {
           trailing: canRead ? const Icon(Icons.chevron_right) : const Icon(Icons.lock_outline),
           onTap: canRead
               ? () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          StoryReaderPage(hasAccess: hasAccess, storyId: story.id),
-                    ),
-                  );
+                  context.push('/stories/${story.id}?hasAccess=$hasAccess');
                 }
               : () => _showStoryDetailDialog(context, story, collection),
         );
@@ -239,7 +234,7 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           Text('오류: $error'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: const Text('돌아가기')),
+          ElevatedButton(onPressed: () => context.pop(), child: const Text('돌아가기')),
         ],
       ),
     );
