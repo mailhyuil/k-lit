@@ -22,4 +22,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get storyList => 'Story List';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get freeStory => 'Free Story';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../../collections/pages/collection_detail_page.dart';
 import '../../collections/providers/collection_provider.dart';
@@ -13,11 +14,12 @@ class MyPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     final purchasedCollectionsAsync = ref.watch(purchasedCollectionsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('마이 페이지'),
+        title: Text(t.myPage),
         titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,
@@ -32,7 +34,7 @@ class MyPage extends ConsumerWidget {
           children: [
             // 구매한 컬렉션 섹션 헤더
             Text(
-              '구매한 컬렉션',
+              t.purchasedCollections,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -64,6 +66,7 @@ class MyPage extends ConsumerWidget {
     WidgetRef ref,
     AsyncValue<List> collectionsAsync,
   ) {
+    final t = AppLocalizations.of(context)!;
     return collectionsAsync.when(
       data: (collections) {
         if (collections.isEmpty) {
@@ -112,7 +115,7 @@ class MyPage extends ConsumerWidget {
               onPressed: () {
                 ref.invalidate(purchasedCollectionsProvider);
               },
-              child: const Text('다시 시도'),
+              child: Text(t.tryAgain),
             ),
           ],
         ),

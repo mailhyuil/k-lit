@@ -180,6 +180,8 @@ class CollectionDetailPage extends ConsumerWidget {
     bool hasAccess,
     Collection collection,
   ) {
+    final t = AppLocalizations.of(context)!;
+
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         final story = stories[index];
@@ -195,10 +197,12 @@ class CollectionDetailPage extends ConsumerWidget {
               ),
             ),
           ),
-          title: Text(story.titleAr, textDirection: TextDirection.rtl, textAlign: TextAlign.right),
-          subtitle: story.isFree
-              ? const Text('무료 체험', style: TextStyle(color: Colors.green))
-              : null,
+          title: Text(
+            story.titleAr,
+            textDirection: t.localeName == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+            textAlign: t.localeName == 'ar' ? TextAlign.right : TextAlign.left,
+          ),
+          subtitle: story.isFree ? Text(t.freeStory, style: TextStyle(color: Colors.green)) : null,
           trailing: canRead ? const Icon(Icons.chevron_right) : const Icon(Icons.lock_outline),
           onTap: canRead
               ? () {

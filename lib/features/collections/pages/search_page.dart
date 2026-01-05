@@ -8,7 +8,6 @@ import 'collection_detail_page.dart';
 /// 검색 페이지
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
-
   @override
   ConsumerState<SearchPage> createState() => _SearchPageState();
 }

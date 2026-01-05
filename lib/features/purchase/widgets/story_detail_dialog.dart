@@ -13,37 +13,58 @@ class StoryDetailDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final purchaseController = ref.read(purchaseControllerProvider.notifier);
     return Dialog(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(children: [Text('Story Detail'), Text(story.titleAr)]),
-            SizedBox(height: 16),
-            Column(children: [Text('Story Intro'), Text(story.introAr ?? '')]),
-            SizedBox(height: 16),
-            Column(children: [Text('Story Commentary'), Text(story.commentaryAr ?? '')]),
-            SizedBox(height: 16),
-            Row(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.primary,
+            child: Column(
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => purchaseController.handlePurchase(context, collection),
-                    child: const Text('구매하기'),
-                  ),
+                Text(
+                  'Title',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('닫기'),
-                  ),
+                Text(
+                  story.titleAr,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                SizedBox(height: 16),
+                Column(children: [Text('Intro'), Text(story.introAr ?? '')]),
+                SizedBox(height: 16),
+                Column(children: [Text('Commentary'), Text(story.commentaryAr ?? '')]),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => purchaseController.handlePurchase(context, collection),
+                        child: const Text('구매하기'),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('닫기'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

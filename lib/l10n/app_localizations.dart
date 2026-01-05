@@ -129,6 +129,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Story List'**
   String get storyList;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @freeStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Story'**
+  String get freeStory;
 }
 
 class _AppLocalizationsDelegate

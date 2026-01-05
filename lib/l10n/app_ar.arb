@@ -4,5 +4,7 @@
   "myPage": "الصفحة الشخصية",
   "logout": "تسجيل الخروج",
   "purchasedCollections": "المجموعات المشتراة",
-  "storyList": "قائمة القصص"
+  "storyList": "قائمة القصص",
+  "tryAgain": "إعادة المحاولة",
+  "freeStory": "القصة المجانية"
 }

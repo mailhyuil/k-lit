@@ -22,4 +22,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get storyList => '작품 목록';
+
+  @override
+  String get tryAgain => '다시 시도';
+
+  @override
+  String get freeStory => '무료 체험';
 }

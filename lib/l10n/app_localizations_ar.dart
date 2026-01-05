@@ -22,4 +22,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storyList => 'قائمة القصص';
+
+  @override
+  String get tryAgain => 'إعادة المحاولة';
+
+  @override
+  String get freeStory => 'القصة المجانية';
 }
