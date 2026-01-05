@@ -24,10 +24,10 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchControllerProvider);
-
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('검색'),
+        title: Text(t.search),
         titleTextStyle: Theme.of(
           context,
         ).textTheme.titleLarge?.copyWith(color: Colors.white),
