@@ -8,7 +8,8 @@ final collectionStoriesProvider = FutureProvider.family<List<Story>, String>((
   ref,
   collectionId,
 ) async {
-  final response = await SupabaseService.instance.client
+  final client = ref.watch(supabaseClientProvider);
+  final response = await client
       .from('stories')
       .select('''
       *,
@@ -35,7 +36,8 @@ final storyProvider = FutureProvider.family<Story?, String>((
   storyId,
 ) async {
   try {
-    final response = await SupabaseService.instance.client
+    final client = ref.watch(supabaseClientProvider);
+  final response = await client
         .from('stories')
         .select('''
       *,
@@ -54,7 +56,8 @@ final storyProvider = FutureProvider.family<Story?, String>((
 
 /// 무료 작품 목록을 제공하는 프로바이더 (Supabase)
 final freeStoriesProvider = FutureProvider<List<Story>>((ref) async {
-  final List response = await SupabaseService.instance.client
+  final client = ref.watch(supabaseClientProvider);
+  final List response = await client
       .from('stories')
       .select('*, story_collections!inner(collection_id)')
       .eq('is_free', true)

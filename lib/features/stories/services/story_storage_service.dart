@@ -25,9 +25,7 @@ class StoryStorageService {
 
       // 1. 메타데이터 다운로드 (_meta.json)
       final metaPath = '$contentUrl/_meta.json';
-      final metaBytes = await SupabaseService.instance.client.storage
-          .from(_bucketName)
-          .download(metaPath);
+      final metaBytes = await SupabaseService.instance.storage.from(_bucketName).download(metaPath);
 
       final metaString = utf8.decode(metaBytes);
       final meta = StoryMeta.fromJsonString(metaString);
@@ -36,7 +34,7 @@ class StoryStorageService {
 
       // 2. 본문 다운로드 (content.txt)
       final contentPath = '$contentUrl/content.txt';
-      final contentBytes = await SupabaseService.instance.client.storage
+      final contentBytes = await SupabaseService.instance.storage
           .from(_bucketName)
           .download(contentPath);
 
@@ -64,15 +62,12 @@ class StoryStorageService {
       final contentPath = '$contentUrl/content.txt';
       final contentBytes = utf8.encode(content.toText());
 
-      await SupabaseService.instance.client.storage
+      await SupabaseService.instance.storage
           .from(_bucketName)
           .uploadBinary(
             contentPath,
             Uint8List.fromList(contentBytes),
-            fileOptions: const FileOptions(
-              contentType: 'text/plain; charset=utf-8',
-              upsert: true,
-            ),
+            fileOptions: const FileOptions(contentType: 'text/plain; charset=utf-8', upsert: true),
           );
 
       debugPrint('✅ Content uploaded: $contentPath');
@@ -82,15 +77,12 @@ class StoryStorageService {
       final meta = StoryMeta(version: content.version);
       final metaBytes = utf8.encode(meta.toJsonString());
 
-      await SupabaseService.instance.client.storage
+      await SupabaseService.instance.storage
           .from(_bucketName)
           .uploadBinary(
             metaPath,
             Uint8List.fromList(metaBytes),
-            fileOptions: const FileOptions(
-              contentType: 'application/json',
-              upsert: true,
-            ),
+            fileOptions: const FileOptions(contentType: 'application/json', upsert: true),
           );
 
       debugPrint('✅ Meta uploaded: $metaPath');
@@ -108,7 +100,7 @@ class StoryStorageService {
       debugPrint('🗑️ Deleting content from Storage: $contentUrl');
 
       // 폴더 내 모든 파일 삭제
-      await SupabaseService.instance.client.storage.from(_bucketName).remove([
+      await SupabaseService.instance.storage.from(_bucketName).remove([
         '$contentUrl/content.txt',
         '$contentUrl/_meta.json',
       ]);
@@ -122,7 +114,7 @@ class StoryStorageService {
 
   /// 콘텐츠 파일의 Public URL 가져오기
   String getPublicUrl(String contentUrl) {
-    return SupabaseService.instance.client.storage
+    return SupabaseService.instance.storage
         .from(_bucketName)
         .getPublicUrl('$contentUrl/content.txt');
   }
@@ -135,7 +127,7 @@ class StoryStorageService {
       final parentPath = pathParts.sublist(0, pathParts.length - 1).join('/');
       final folderName = pathParts.last;
 
-      final files = await SupabaseService.instance.client.storage
+      final files = await SupabaseService.instance.storage
           .from(_bucketName)
           .list(path: parentPath.isEmpty ? null : parentPath);
 
@@ -155,9 +147,7 @@ class StoryStorageService {
       final parentPath = pathParts.sublist(0, pathParts.length - 1).join('/');
       final fileName = pathParts.last;
 
-      final files = await SupabaseService.instance.client.storage
-          .from(_bucketName)
-          .list(path: parentPath);
+      final files = await SupabaseService.instance.storage.from(_bucketName).list(path: parentPath);
 
       final file = files.firstWhere(
         (file) => file.name == fileName,
@@ -175,9 +165,7 @@ class StoryStorageService {
   Future<StoryMeta> downloadMeta(String contentUrl) async {
     try {
       final metaPath = '$contentUrl/_meta.json';
-      final metaBytes = await SupabaseService.instance.client.storage
-          .from(_bucketName)
-          .download(metaPath);
+      final metaBytes = await SupabaseService.instance.storage.from(_bucketName).download(metaPath);
 
       final metaString = utf8.decode(metaBytes);
       return StoryMeta.fromJsonString(metaString);

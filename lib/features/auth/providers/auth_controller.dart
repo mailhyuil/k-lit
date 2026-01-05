@@ -41,7 +41,10 @@ class AuthController extends Notifier<AuthState> {
     try {
       await SupabaseService.auth.signInWithOAuth(
         OAuthProvider.facebook,
-        redirectTo: SupabaseService.redirectUrl,
+        redirectTo:
+            'com.mailhyuil.library://login-callback/', // Optionally set the redirect link to bring back the user via deeplink.
+        authScreenLaunchMode:
+            LaunchMode.externalApplication, // Launch the auth screen in a new webview on mobile.
       );
       // OAuth는 브라우저에서 처리되므로 여기서는 성공으로 간주
       // 실제 인증 결과는 authStateProvider에서 감지됨
@@ -80,8 +83,7 @@ class AuthController extends Notifier<AuthState> {
     if (error is AuthException) {
       return '로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
     }
-    if (error.toString().contains('network') ||
-        error.toString().contains('Network')) {
+    if (error.toString().contains('network') || error.toString().contains('Network')) {
       return '네트워크 상태를 확인해주세요.';
     }
     if (error.toString().contains('cancel')) {
@@ -92,6 +94,4 @@ class AuthController extends Notifier<AuthState> {
 }
 
 /// 인증 컨트롤러 프로바이더
-final authControllerProvider = NotifierProvider<AuthController, AuthState>(
-  () => AuthController(),
-);
+final authControllerProvider = NotifierProvider<AuthController, AuthState>(() => AuthController());

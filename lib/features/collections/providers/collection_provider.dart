@@ -6,7 +6,8 @@ import '../models/collection.dart';
 
 /// 모든 컬렉션 목록을 제공하는 프로바이더 (Supabase)
 final collectionsProvider = FutureProvider<List<Collection>>((ref) async {
-  final response = await SupabaseService.instance.client
+  final client = ref.watch(supabaseClientProvider);
+  final response = await client
       .from('collections')
       .select('*, stories(count)')
       .order('order_index', ascending: true);

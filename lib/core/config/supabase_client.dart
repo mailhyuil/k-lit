@@ -1,24 +1,28 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'supabase_config.dart';
 
-/// Supabase 클라이언트 초기화 및 접근
 class SupabaseService {
-  /// OAuth 리다이렉트 URL
-  static const String redirectUrl = 'com.mailhyuil.library://login-callback/';
+  static late final SupabaseClient instance;
+  static late final GoTrueClient auth;
+  static late final String? redirectUrl;
+
+  static User? get currentUser => auth.currentUser;
 
   static Future<void> initialize() async {
     await Supabase.initialize(
-      url: SupabaseConfig.url,
-      anonKey: SupabaseConfig.anonKey,
+      url: dotenv.env['SUPABASE_URL']!,
+      anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+      debug: kDebugMode,
     );
+    instance = Supabase.instance.client;
+    auth = instance.auth;
+    redirectUrl = (kIsWeb) ? null : dotenv.env['SUPABASE_REDIRECT_URL'];
   }
-
-  /// Supabase 인스턴스 접근
-  static Supabase get instance => Supabase.instance;
-
-  /// Supabase 클라이언트 접근
-  static GoTrueClient get auth => instance.client.auth;
-
-  /// 현재 사용자
-  static User? get currentUser => auth.currentUser;
 }
+
+/// Provider for the Supabase client for dependency injection.
+final supabaseClientProvider = Provider<SupabaseClient>((ref) {
+  return SupabaseService.instance;
+});

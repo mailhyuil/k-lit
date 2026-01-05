@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:k_lit/features/collections/models/collection.dart';
 import 'package:k_lit/features/purchase/widgets/purchase_dialog.dart';
+import 'package:k_lit/features/purchase/services/revenuecat_service.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Purchase 상태
@@ -30,6 +31,8 @@ class PurchaseState {
 
 /// Purchase Controller
 class PurchaseController extends Notifier<PurchaseState> {
+  RevenueCatService get _revenueCatService => ref.read(revenueCatServiceProvider);
+
   @override
   PurchaseState build() {
     // 초기화 후 데이터 로드
@@ -44,7 +47,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   Future<void> _loadOfferings() async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      final offerings = await Purchases.getOfferings();
+      final offerings = await _revenueCatService.getOfferings();
       state = state.copyWith(isLoading: false, offerings: offerings);
       debugPrint('✅ Offerings 로드 완료: ${offerings.all.length}개');
     } catch (e) {
@@ -56,7 +59,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   /// Customer Info 불러오기 (구매 정보)
   Future<void> _loadCustomerInfo() async {
     try {
-      final customerInfo = await Purchases.getCustomerInfo();
+      final customerInfo = await _revenueCatService.getCustomerInfo();
 
       state = state.copyWith(customerInfo: customerInfo);
 
@@ -85,7 +88,7 @@ class PurchaseController extends Notifier<PurchaseState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
       debugPrint('🛒 구매 시작: ${package.storeProduct.identifier}');
-      final purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
+      final purchaseResult = await _revenueCatService.purchasePackage(package);
       final customerInfo = purchaseResult.customerInfo;
       state = state.copyWith(isLoading: false, customerInfo: customerInfo);
 
@@ -115,7 +118,7 @@ class PurchaseController extends Notifier<PurchaseState> {
       state = state.copyWith(isLoading: true, error: null);
       debugPrint('🔄 구매 복원 시작');
 
-      final customerInfo = await Purchases.restorePurchases();
+      final customerInfo = await _revenueCatService.restorePurchases();
 
       state = state.copyWith(isLoading: false, customerInfo: customerInfo);
 
