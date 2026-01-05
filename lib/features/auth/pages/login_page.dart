@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../providers/auth_controller.dart';
 
@@ -12,7 +13,7 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
     final authController = ref.read(authControllerProvider.notifier);
-
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -28,8 +29,8 @@ class LoginPage extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
-                '한국 문학 아랍어 번역본을 읽어보세요',
+              Text(
+                t.loginPageDescription,
                 style: TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -37,26 +38,32 @@ class LoginPage extends ConsumerWidget {
 
               // Google 로그인 버튼
               _SocialLoginButton(
-                label: 'Google로 로그인',
+                label: t.loginPageGoogleLogin,
                 icon: Icons.g_mobiledata,
-                onPressed: authState.isLoading ? null : () => authController.signInWithGoogle(),
+                onPressed: authState.isLoading
+                    ? null
+                    : () => authController.signInWithGoogle(),
                 isLoading: authState.isLoading,
               ),
               const SizedBox(height: 16),
 
               // Facebook 로그인 버튼
               _SocialLoginButton(
-                label: 'Facebook으로 로그인',
+                label: t.loginPageFacebookLogin,
                 icon: Icons.facebook,
-                onPressed: authState.isLoading ? null : () => authController.signInWithFacebook(),
+                onPressed: authState.isLoading
+                    ? null
+                    : () => authController.signInWithFacebook(),
                 isLoading: authState.isLoading,
               ),
               const SizedBox(height: 16),
               // Email로 로그인
               _SocialLoginButton(
-                label: 'Email로 로그인',
+                label: t.loginPageEmailLogin,
                 icon: Icons.email,
-                onPressed: authState.isLoading ? null : () => context.push('/email'),
+                onPressed: authState.isLoading
+                    ? null
+                    : () => context.push('/email'),
                 isLoading: authState.isLoading,
               ),
               // Apple 로그인 버튼
@@ -117,7 +124,11 @@ class _SocialLoginButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       child: isLoading
-          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Icon(icon), const SizedBox(width: 8), Text(label)],

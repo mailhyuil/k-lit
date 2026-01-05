@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/config/supabase_client.dart';
 import '../models/profile.dart';
 import 'auth_providers.dart';
@@ -24,7 +25,7 @@ final profileProvider = FutureProvider<Profile?>((ref) async {
       return null;
     }
 
-    return Profile.fromJson(response);
+    return Profile.fromMap(response);
   } catch (e) {
     // 프로필이 없거나 조회 실패 시 null 반환
     return null;

@@ -132,6 +132,7 @@ class MyPage extends ConsumerWidget {
 
   /// Empty State - 구매한 컬렉션이 없을 때
   Widget _buildEmptyState(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -144,7 +145,7 @@ class MyPage extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '구매한 컬렉션이 없습니다',
+              t.noPurchasedCollections,
               style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 16),
@@ -156,12 +157,13 @@ class MyPage extends ConsumerWidget {
 
   /// 로그아웃 섹션
   Widget _buildLogoutSection(BuildContext context, WidgetRef ref) {
+    final t = AppLocalizations.of(context)!;
     return Center(
       child: ElevatedButton.icon(
         onPressed: () => _showLogoutDialog(context, ref),
         icon: const Icon(Icons.logout, color: Colors.white),
-        label: const Text(
-          '로그아웃',
+        label: Text(
+          t.logout,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(
@@ -174,22 +176,23 @@ class MyPage extends ConsumerWidget {
 
   /// 로그아웃 확인 다이얼로그
   Future<void> _showLogoutDialog(BuildContext context, WidgetRef ref) async {
+    final t = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('로그아웃'),
-        content: const Text('정말 로그아웃하시겠습니까?'),
+        title: Text(t.logout),
+        content: Text(t.logoutConfirm),
         actions: [
           TextButton(
             onPressed: () => context.pop(false),
-            child: const Text('취소'),
+            child: Text(t.cancel),
           ),
           FilledButton(
             onPressed: () => context.pop(true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('로그아웃'),
+            child: Text(t.logout),
           ),
         ],
       ),

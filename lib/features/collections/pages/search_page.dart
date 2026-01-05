@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../providers/search_provider.dart';
 
@@ -36,7 +37,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       body: Column(
         children: [
           // 검색 입력
-          _buildSearchBar(),
+          _buildSearchBar(context),
           // 검색 결과
           Expanded(child: _buildSearchResults(searchState)),
         ],
@@ -44,13 +45,14 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: '컬렉션 또는 작품 검색...',
+          hintText: t.searchPlaceholder,
           prefixIcon: const Icon(Icons.search),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
@@ -75,7 +77,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Widget _buildSearchResults(SearchState searchState) {
     // 검색 전
     if (searchState.query.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     // 로딩 중
@@ -104,7 +106,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -112,12 +115,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           Icon(Icons.search, size: 80, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
-            '컬렉션 또는 작품을 검색하세요',
+            t.searchPlaceholder,
             style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 8),
           Text(
-            '제목, 설명으로 검색 가능',
+            t.searchDescription,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
         ],

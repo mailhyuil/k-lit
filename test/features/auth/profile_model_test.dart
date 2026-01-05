@@ -15,7 +15,7 @@ void main() {
     };
 
     test('fromJson creates a valid Profile object', () {
-      final profile = Profile.fromJson(profileJson);
+      final profile = Profile.fromMap(profileJson);
 
       expect(profile.id, 'user-id-123');
       expect(profile.username, 'testuser');
@@ -52,7 +52,7 @@ void main() {
         'updated_at': now.toIso8601String(),
       };
 
-      final profile = Profile.fromJson(profileJsonWithNulls);
+      final profile = Profile.fromMap(profileJsonWithNulls);
 
       expect(profile.id, 'user-id-456');
       expect(profile.username, isNull);

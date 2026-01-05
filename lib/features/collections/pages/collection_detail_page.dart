@@ -142,6 +142,7 @@ class CollectionDetailPage extends ConsumerWidget {
     Collection collection,
     PurchaseController purchaseController,
   ) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -162,13 +163,13 @@ class CollectionDetailPage extends ConsumerWidget {
             children: [
               if (collection.isFree)
                 Chip(
-                  label: const Text('무료 컬렉션'),
+                  label: Text(t.freeContent),
                   backgroundColor: Colors.blue.shade100,
                   labelStyle: TextStyle(color: Colors.blue.shade700),
                 ),
               if (collection.isPurchased && !collection.isFree)
                 Chip(
-                  label: const Text('구매완료'),
+                  label: Text(t.purchased),
                   backgroundColor: Colors.green.shade100,
                   labelStyle: TextStyle(color: Colors.green.shade700),
                 ),
@@ -183,7 +184,7 @@ class CollectionDetailPage extends ConsumerWidget {
                 onPressed: () =>
                     purchaseController.handlePurchase(context, collection),
                 icon: const Icon(Icons.shopping_cart),
-                label: Text('컬렉션 구매 (\$${collection.price})'),
+                label: Text('${t.buyCollection} (\$${collection.price})'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -226,7 +227,7 @@ class CollectionDetailPage extends ConsumerWidget {
             textAlign: t.localeName == 'ar' ? TextAlign.right : TextAlign.left,
           ),
           subtitle: story.isFree
-              ? Text(t.freeStory, style: TextStyle(color: Colors.green))
+              ? Text(t.freeContent, style: TextStyle(color: Colors.green))
               : null,
           trailing: canRead
               ? const Icon(Icons.chevron_right)

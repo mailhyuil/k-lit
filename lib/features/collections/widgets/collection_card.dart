@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
 
 import '../models/collection.dart';
 
@@ -43,11 +44,16 @@ class CollectionCard extends StatelessWidget {
   Widget _buildPlaceholderCover() {
     return Container(
       color: Colors.grey.shade200,
-      child: Icon(Icons.collections_bookmark, size: 48, color: Colors.grey.shade400),
+      child: Icon(
+        Icons.collections_bookmark,
+        size: 48,
+        color: Colors.grey.shade400,
+      ),
     );
   }
 
   Widget _buildInfo(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -69,7 +75,7 @@ class CollectionCard extends StatelessWidget {
 
           // 작품 수
           Text(
-            '${collection.storyCount}개 작품',
+            '${collection.storyCount} ${t.storyCountLabel}',
             style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 4),
@@ -78,9 +84,11 @@ class CollectionCard extends StatelessWidget {
           Wrap(
             spacing: 4,
             children: [
-              if (collection.isFree) _buildFreeBadge(),
-              if (collection.isPurchased && !collection.isFree) _buildPurchasedBadge(),
-              if (!collection.isPurchased && !collection.isFree) _buildPriceBadge(context),
+              if (collection.isFree) _buildFreeBadge(context),
+              if (collection.isPurchased && !collection.isFree)
+                _buildPurchasedBadge(context),
+              if (!collection.isPurchased && !collection.isFree)
+                _buildPriceBadge(context),
             ],
           ),
         ],
@@ -88,7 +96,8 @@ class CollectionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFreeBadge() {
+  Widget _buildFreeBadge(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -96,13 +105,18 @@ class CollectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '무료',
-        style: TextStyle(fontSize: 10, color: Colors.blue.shade700, fontWeight: FontWeight.w600),
+        t.freeContent,
+        style: TextStyle(
+          fontSize: 10,
+          color: Colors.blue.shade700,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
 
-  Widget _buildPurchasedBadge() {
+  Widget _buildPurchasedBadge(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -110,13 +124,18 @@ class CollectionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        '구매완료',
-        style: TextStyle(fontSize: 10, color: Colors.green.shade700, fontWeight: FontWeight.w600),
+        t.purchased,
+        style: TextStyle(
+          fontSize: 10,
+          color: Colors.green.shade700,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
 
   Widget _buildPriceBadge(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final price = '\$${collection.price}';
     return Row(
       children: [
@@ -127,7 +146,7 @@ class CollectionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            '유료',
+            t.paidContent,
             style: TextStyle(
               fontSize: 10,
               color: Theme.of(context).colorScheme.onPrimaryContainer,

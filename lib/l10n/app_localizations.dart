@@ -100,47 +100,161 @@ abstract class AppLocalizations {
     Locale('ar'),
   ];
 
+  /// No description provided for @loginPageDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **''**
+  String get loginPageDescription;
+
+  /// No description provided for @loginPageGoogleLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'Google로 로그인'**
+  String get loginPageGoogleLogin;
+
+  /// No description provided for @loginPageFacebookLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'Facebook으로 로그인'**
+  String get loginPageFacebookLogin;
+
+  /// No description provided for @loginPageEmailLogin.
+  ///
+  /// In ko, this message translates to:
+  /// **'Email로 로그인'**
+  String get loginPageEmailLogin;
+
+  /// No description provided for @logout.
+  ///
+  /// In ko, this message translates to:
+  /// **'로그아웃'**
+  String get logout;
+
   /// No description provided for @collections.
   ///
-  /// In en, this message translates to:
-  /// **'Collections'**
+  /// In ko, this message translates to:
+  /// **'컬렉션'**
   String get collections;
 
   /// No description provided for @myPage.
   ///
-  /// In en, this message translates to:
-  /// **'My Page'**
+  /// In ko, this message translates to:
+  /// **'마이 페이지'**
   String get myPage;
-
-  /// No description provided for @logout.
-  ///
-  /// In en, this message translates to:
-  /// **'Logout'**
-  String get logout;
 
   /// No description provided for @purchasedCollections.
   ///
-  /// In en, this message translates to:
-  /// **'Purchased Collections'**
+  /// In ko, this message translates to:
+  /// **'구매한 컬렉션'**
   String get purchasedCollections;
 
   /// No description provided for @storyList.
   ///
-  /// In en, this message translates to:
-  /// **'Story List'**
+  /// In ko, this message translates to:
+  /// **'작품 목록'**
   String get storyList;
 
   /// No description provided for @tryAgain.
   ///
-  /// In en, this message translates to:
-  /// **'Try Again'**
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
   String get tryAgain;
 
-  /// No description provided for @freeStory.
+  /// No description provided for @search.
   ///
-  /// In en, this message translates to:
-  /// **'Free Story'**
-  String get freeStory;
+  /// In ko, this message translates to:
+  /// **'검색'**
+  String get search;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In ko, this message translates to:
+  /// **'컬렉션 또는 작품 검색을 검색하세요'**
+  String get searchPlaceholder;
+
+  /// No description provided for @searchDescription.
+  ///
+  /// In ko, this message translates to:
+  /// **'제목, 설명으로 검색이 가능합니다.'**
+  String get searchDescription;
+
+  /// No description provided for @freeContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'무료'**
+  String get freeContent;
+
+  /// No description provided for @paidContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'유료'**
+  String get paidContent;
+
+  /// No description provided for @purchased.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매완료'**
+  String get purchased;
+
+  /// No description provided for @storyCountLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'개의 작품'**
+  String get storyCountLabel;
+
+  /// No description provided for @buyCollection.
+  ///
+  /// In ko, this message translates to:
+  /// **'컬렉션 구매'**
+  String get buyCollection;
+
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In ko, this message translates to:
+  /// **'정말 로그아웃하시겠습니까?'**
+  String get logoutConfirm;
+
+  /// No description provided for @buy.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매하기'**
+  String get buy;
+
+  /// No description provided for @restore.
+  ///
+  /// In ko, this message translates to:
+  /// **'복원'**
+  String get restore;
+
+  /// No description provided for @cancel.
+  ///
+  /// In ko, this message translates to:
+  /// **'취소'**
+  String get cancel;
+
+  /// No description provided for @noPurchasedCollections.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매한 컬렉션이 없습니다'**
+  String get noPurchasedCollections;
+
+  /// No description provided for @storyTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'제목'**
+  String get storyTitle;
+
+  /// No description provided for @storyIntro.
+  ///
+  /// In ko, this message translates to:
+  /// **'소개'**
+  String get storyIntro;
+
+  /// No description provided for @storyCommentary.
+  ///
+  /// In ko, this message translates to:
+  /// **'해설'**
+  String get storyCommentary;
 }
 
 class _AppLocalizationsDelegate

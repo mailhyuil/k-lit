@@ -23,7 +23,9 @@ class CollectionListPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.collections),
-        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+        titleTextStyle: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(color: Colors.white),
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,
       ),
@@ -48,9 +50,16 @@ class CollectionListPage extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.collections_bookmark_outlined, size: 64, color: Colors.grey.shade400),
+          Icon(
+            Icons.collections_bookmark_outlined,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
           const SizedBox(height: 16),
-          Text('등록된 컬렉션이 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
+          Text(
+            '등록된 컬렉션이 없습니다',
+            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+          ),
         ],
       ),
     );
@@ -84,7 +93,10 @@ class CollectionListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCollectionGrid(BuildContext context, List<Collection> collections) {
+  Widget _buildCollectionGrid(
+    BuildContext context,
+    List<Collection> collections,
+  ) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

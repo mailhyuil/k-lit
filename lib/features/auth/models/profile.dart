@@ -14,7 +14,7 @@ class Profile {
     required this.updatedAt,
   });
 
-  factory Profile.fromJson(Map<String, dynamic> json) {
+  factory Profile.fromMap(Map<String, dynamic> json) {
     return Profile(
       id: json['id'] as String,
       username: json['username'] as String?,
@@ -22,15 +22,5 @@ class Profile {
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'username': username,
-      'avatar_url': avatarUrl,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-    };
   }
 }

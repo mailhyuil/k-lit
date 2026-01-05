@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:k_lit/l10n/app_localizations.dart';
+
+import '../../auth/pages/my_page.dart';
 import '../../collections/pages/collection_list_page.dart';
 import '../../collections/pages/search_page.dart';
-import '../../auth/pages/my_page.dart';
 
 /// 메인 네비게이션 - 하단 네비게이션 바로 페이지 전환
 class MainNavigation extends StatefulWidget {
@@ -22,6 +24,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: BottomNavigationBar(
@@ -34,13 +37,13 @@ class _MainNavigationState extends State<MainNavigation> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).colorScheme.primary,
         unselectedItemColor: Colors.grey,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.collections_bookmark),
-            label: '컬렉션',
+            label: t.collections,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '마이 페이지'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: t.search),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: t.myPage),
         ],
       ),
     );
