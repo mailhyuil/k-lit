@@ -37,7 +37,7 @@ final storyProvider = FutureProvider.family<Story?, String>((
 ) async {
   try {
     final client = ref.watch(supabaseClientProvider);
-  final response = await client
+    final response = await client
         .from('stories')
         .select('''
       *,

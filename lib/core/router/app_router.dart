@@ -16,18 +16,17 @@ final appRouter = GoRouter(
       routes: [
         GoRoute(
           path: ':id',
-          builder: (context, state) =>
-              CollectionDetailPage(collectionId: state.pathParameters['id'] ?? ''),
+          builder: (context, state) => CollectionDetailPage(
+            collectionId: state.pathParameters['id'] ?? '',
+          ),
         ),
       ],
     ),
-
     GoRoute(
       path: '/stories/:id',
       builder: (context, state) {
         final storyId = state.pathParameters['id'] ?? '';
-        final hasAccess = state.uri.queryParameters['hasAccess'] == 'true';
-        return StoryReaderPage(hasAccess: hasAccess, storyId: storyId);
+        return StoryReaderPage(storyId: storyId);
       },
     ),
     GoRoute(path: '/search', builder: (context, state) => const SearchPage()),

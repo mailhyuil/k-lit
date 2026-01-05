@@ -92,7 +92,8 @@ class AuthController extends Notifier<AuthState> {
     if (error is AuthException) {
       return '로그인 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
     }
-    if (error.toString().contains('network') || error.toString().contains('Network')) {
+    if (error.toString().contains('network') ||
+        error.toString().contains('Network')) {
       return '네트워크 상태를 확인해주세요.';
     }
     if (error.toString().contains('cancel')) {
@@ -103,4 +104,6 @@ class AuthController extends Notifier<AuthState> {
 }
 
 /// 인증 컨트롤러 프로바이더
-final authControllerProvider = NotifierProvider<AuthController, AuthState>(() => AuthController());
+final authControllerProvider = NotifierProvider<AuthController, AuthState>(
+  () => AuthController(),
+);

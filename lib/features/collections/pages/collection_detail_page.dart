@@ -32,16 +32,20 @@ class CollectionDetailPage extends ConsumerWidget {
             slivers: [
               _buildAppBar(context, collection),
               SliverToBoxAdapter(
-                child: _buildCollectionInfo(context, collection, purchaseController),
+                child: _buildCollectionInfo(
+                  context,
+                  collection,
+                  purchaseController,
+                ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     t.storyList,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -55,7 +59,10 @@ class CollectionDetailPage extends ConsumerWidget {
                 ),
                 loading: () => const SliverToBoxAdapter(
                   child: Center(
-                    child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()),
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 ),
                 error: (error, stack) =>
@@ -79,7 +86,10 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           const Text('컬렉션을 찾을 수 없습니다'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => context.pop(), child: const Text('돌아가기')),
+          ElevatedButton(
+            onPressed: () => context.pop(),
+            child: const Text('돌아가기'),
+          ),
         ],
       ),
     );
@@ -92,7 +102,10 @@ class CollectionDetailPage extends ConsumerWidget {
       flexibleSpace: FlexibleSpaceBar(
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(4),
+          ),
           child: Text(
             collection.titleAr,
             style: const TextStyle(fontSize: 14, color: Colors.white),
@@ -105,7 +118,8 @@ class CollectionDetailPage extends ConsumerWidget {
             ? Image.network(
                 collection.coverUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildPlaceholderCover(),
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildPlaceholderCover(),
               )
             : _buildPlaceholderCover(),
       ),
@@ -115,7 +129,11 @@ class CollectionDetailPage extends ConsumerWidget {
   Widget _buildPlaceholderCover() {
     return Container(
       color: Colors.grey.shade300,
-      child: Icon(Icons.collections_bookmark, size: 100, color: Colors.grey.shade500),
+      child: Icon(
+        Icons.collections_bookmark,
+        size: 100,
+        color: Colors.grey.shade500,
+      ),
     );
   }
 
@@ -162,10 +180,13 @@ class CollectionDetailPage extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => purchaseController.handlePurchase(context, collection),
+                onPressed: () =>
+                    purchaseController.handlePurchase(context, collection),
                 icon: const Icon(Icons.shopping_cart),
                 label: Text('컬렉션 구매 (\$${collection.price})'),
-                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
         ],
@@ -199,14 +220,20 @@ class CollectionDetailPage extends ConsumerWidget {
           ),
           title: Text(
             story.titleAr,
-            textDirection: t.localeName == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+            textDirection: t.localeName == 'ar'
+                ? TextDirection.rtl
+                : TextDirection.ltr,
             textAlign: t.localeName == 'ar' ? TextAlign.right : TextAlign.left,
           ),
-          subtitle: story.isFree ? Text(t.freeStory, style: TextStyle(color: Colors.green)) : null,
-          trailing: canRead ? const Icon(Icons.chevron_right) : const Icon(Icons.lock_outline),
+          subtitle: story.isFree
+              ? Text(t.freeStory, style: TextStyle(color: Colors.green))
+              : null,
+          trailing: canRead
+              ? const Icon(Icons.chevron_right)
+              : const Icon(Icons.lock_outline),
           onTap: canRead
               ? () {
-                  context.push('/stories/${story.id}?hasAccess=$hasAccess');
+                  context.push('/stories/${story.id}');
                 }
               : () => _showStoryDetailDialog(context, story, collection),
         );
@@ -234,7 +261,10 @@ class CollectionDetailPage extends ConsumerWidget {
           const SizedBox(height: 16),
           Text('오류: $error'),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: () => context.pop(), child: const Text('돌아가기')),
+          ElevatedButton(
+            onPressed: () => context.pop(),
+            child: const Text('돌아가기'),
+          ),
         ],
       ),
     );
@@ -242,14 +272,22 @@ class CollectionDetailPage extends ConsumerWidget {
 
   void _showLockSnackbar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('이 작품을 읽으려면 컬렉션을 구매해야 합니다'), duration: Duration(seconds: 2)),
+      const SnackBar(
+        content: Text('이 작품을 읽으려면 컬렉션을 구매해야 합니다'),
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 
-  void _showStoryDetailDialog(BuildContext context, Story story, Collection collection) {
+  void _showStoryDetailDialog(
+    BuildContext context,
+    Story story,
+    Collection collection,
+  ) {
     showDialog(
       context: context,
-      builder: (context) => StoryDetailDialog(story: story, collection: collection),
+      builder: (context) =>
+          StoryDetailDialog(story: story, collection: collection),
     );
   }
 }

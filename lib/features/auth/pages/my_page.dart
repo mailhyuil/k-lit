@@ -20,7 +20,9 @@ class MyPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.myPage),
-        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+        titleTextStyle: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(color: Colors.white),
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: false,
       ),
@@ -35,7 +37,9 @@ class MyPage extends ConsumerWidget {
             // 구매한 컬렉션 섹션 헤더
             Text(
               t.purchasedCollections,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             // 구매한 컬렉션 목록
@@ -95,12 +99,19 @@ class MyPage extends ConsumerWidget {
         );
       },
       loading: () => const Center(
-        child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator()),
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: CircularProgressIndicator(),
+        ),
       ),
       error: (error, stack) => Center(
         child: Column(
           children: [
-            Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               '컬렉션을 불러오는 중 오류가 발생했습니다',
@@ -126,9 +137,16 @@ class MyPage extends ConsumerWidget {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
-            Icon(Icons.collections_bookmark_outlined, size: 64, color: Colors.grey.shade400),
+            Icon(
+              Icons.collections_bookmark_outlined,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
             const SizedBox(height: 16),
-            Text('구매한 컬렉션이 없습니다', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
+            Text(
+              '구매한 컬렉션이 없습니다',
+              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            ),
             const SizedBox(height: 16),
           ],
         ),
@@ -138,11 +156,9 @@ class MyPage extends ConsumerWidget {
 
   /// 로그아웃 섹션
   Widget _buildLogoutSection(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authControllerProvider);
-
     return Center(
       child: ElevatedButton.icon(
-        onPressed: authState.isLoading ? null : () => _showLogoutDialog(context, ref),
+        onPressed: () => _showLogoutDialog(context, ref),
         icon: const Icon(Icons.logout, color: Colors.white),
         label: const Text(
           '로그아웃',
@@ -164,10 +180,15 @@ class MyPage extends ConsumerWidget {
         title: const Text('로그아웃'),
         content: const Text('정말 로그아웃하시겠습니까?'),
         actions: [
-          TextButton(onPressed: () => context.pop(false), child: const Text('취소')),
+          TextButton(
+            onPressed: () => context.pop(false),
+            child: const Text('취소'),
+          ),
           FilledButton(
             onPressed: () => context.pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('로그아웃'),
           ),
         ],

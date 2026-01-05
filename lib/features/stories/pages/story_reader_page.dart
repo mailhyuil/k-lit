@@ -15,12 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryReaderPage extends ConsumerStatefulWidget {
   final String storyId;
-  final bool hasAccess;
-  const StoryReaderPage({
-    super.key,
-    required this.storyId,
-    required this.hasAccess,
-  });
+  const StoryReaderPage({super.key, required this.storyId});
 
   @override
   ConsumerState<StoryReaderPage> createState() => _StoryReaderPageState();
@@ -83,16 +78,12 @@ class _StoryReaderPageState extends ConsumerState<StoryReaderPage> {
     });
 
     final storyAsync = ref.watch(storyProvider(widget.storyId));
-
     return Scaffold(
       backgroundColor: _displayTheme.backgroundColor,
       body: storyAsync.when(
         data: (story) {
           if (story == null) {
             return ReaderErrorWidgets.buildNotFound(context, _displayTheme);
-          }
-          if (!story.isFree && !widget.hasAccess) {
-            return ReaderErrorWidgets.buildLockedState(context, _displayTheme);
           }
           final contentAsync = ref.watch(storyContentProvider(widget.storyId));
           return contentAsync.when(
