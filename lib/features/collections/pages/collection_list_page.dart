@@ -71,8 +71,6 @@ class CollectionListPage extends ConsumerWidget {
     Object? error,
     StackTrace? stackTrace,
   ) {
-    debugPrint('컬렉션 목록 불러오기 오류: $error');
-    debugPrint('컬렉션 목록 불러오기 오류 스택 트레이스: $stackTrace');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

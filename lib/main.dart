@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:k_lit/core/config/global_error_handler.dart';
 import 'package:k_lit/core/router/app_router.dart';
 import 'package:k_lit/l10n/app_localizations.dart';
 
@@ -10,10 +13,19 @@ import 'core/config/supabase_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ErrorWidget.builder = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details);
-    return const SizedBox.shrink(); // 화면에 아무것도 안 띄움
+
+  // Synchronous errors handling
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
   };
+  // Asynchronous errors handling
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FlutterError.presentError(
+      FlutterErrorDetails(exception: error, stack: stack),
+    );
+    return true;
+  };
+
   // 환경 변수 로드
   try {
     await dotenv.load(fileName: '.env');
@@ -43,7 +55,9 @@ void main() async {
     // RevenueCat 초기화 실패해도 계속 진행 (개발용)
   }
 
-  runApp(const ProviderScope(child: MyApp())); // riverpod scope 설정
+  runApp(
+    ProviderScope(observers: [GlobalErrorHandler()], child: MyApp()),
+  ); // riverpod scope 설정
 }
 
 class MyApp extends StatelessWidget {
