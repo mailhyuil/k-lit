@@ -1,44 +1,23 @@
-/// Purchase 모델
-///
-/// 구매 기록 (불변 로그)
-class Purchase {
-  final String id;
-  final String userId;
-  final String collectionId;
-  final String productId;
-  final String transactionId;
-  final String source;
-  final int? amountCents;
-  final String? currency;
-  final String status;
-  final DateTime createdAt;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const Purchase({
-    required this.id,
-    required this.userId,
-    required this.collectionId,
-    required this.productId,
-    required this.transactionId,
-    required this.source,
-    this.amountCents,
-    this.currency,
-    required this.status,
-    required this.createdAt,
-  });
+part 'purchase.freezed.dart';
+part 'purchase.g.dart';
+
+@freezed
+abstract class Purchase with _$Purchase {
+  const factory Purchase({
+    required String id,
+    @JsonKey(name: 'user_id') required String userId,
+    @JsonKey(name: 'collection_id') required String collectionId,
+    @JsonKey(name: 'product_id') required String productId,
+    @JsonKey(name: 'transaction_id') required String transactionId,
+    @JsonKey(name: 'source') required String source,
+    @JsonKey(name: 'currency') String? currency,
+    @JsonKey(name: 'status') required String status,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+  }) = _Purchase;
 
   /// Supabase에서 가져온 데이터를 모델로 변환
-  factory Purchase.fromMap(Map<String, dynamic> map) {
-    return Purchase(
-      id: map['id'] as String,
-      userId: map['user_id'] as String,
-      collectionId: map['collection_id'] as String,
-      productId: map['product_id'] as String,
-      transactionId: map['transaction_id'] as String,
-      source: map['source'] as String,
-      amountCents: map['amount_cents'] as int?,
-      currency: map['currency'] as String?,
-      status: map['status'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
-    );
-  }
+  factory Purchase.fromJson(Map<String, dynamic> map) =>
+      _$PurchaseFromJson(map);
 }

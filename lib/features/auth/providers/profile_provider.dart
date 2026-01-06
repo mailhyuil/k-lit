@@ -25,7 +25,7 @@ final profileProvider = FutureProvider<Profile?>((ref) async {
       return null;
     }
 
-    return Profile.fromMap(response);
+    return Profile.fromJson(response);
   } catch (e) {
     // 프로필이 없거나 조회 실패 시 null 반환
     return null;

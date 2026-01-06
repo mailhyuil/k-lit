@@ -19,7 +19,7 @@ final storiesProvider = FutureProvider<List<Story>>((ref) async {
     ''')
       .order('order_index', ascending: true);
   return (response as List)
-      .map((map) => Story.fromMap(map as Map<String, dynamic>))
+      .map((map) => Story.fromJson(map as Map<String, dynamic>))
       .toList();
 });
 
@@ -39,7 +39,7 @@ final freeStoriesProvider = FutureProvider<List<Story>>((ref) async {
     ''')
       .eq('is_free', true)
       .order('order_index', ascending: true);
-  return response.map((map) => Story.fromMap(map)).toList();
+  return response.map((map) => Story.fromJson(map)).toList();
 });
 
 /// 특정 컬렉션의 모든 작품을 제공하는 프로바이더 (Supabase)
@@ -66,7 +66,7 @@ final storiesByCollectionIdProvider =
           );
 
       return (response as List)
-          .map((map) => Story.fromMap(map as Map<String, dynamic>))
+          .map((map) => Story.fromJson(map as Map<String, dynamic>))
           .toList();
     });
 
@@ -90,7 +90,7 @@ final storyByStoryIdProvider = FutureProvider.family<Story?, String>((
     ''')
         .eq('id', storyId)
         .single();
-    return Story.fromMap(response);
+    return Story.fromJson(response);
   } catch (e) {
     // 작품을 찾지 못한 경우 null 반환
     return null;

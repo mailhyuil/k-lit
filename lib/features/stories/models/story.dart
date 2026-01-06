@@ -1,101 +1,32 @@
-/// Story (작품) 모델 - Hybrid Storage
-///
-/// DB: 제목, 서문(intro), 해설(commentary) - 미리보기용
-/// Storage: 본문(body) - 구입 후 다운로드
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'story.freezed.dart';
+part 'story.g.dart';
 
 typedef StoryCollection = ({String id, String? rcIdentifier});
 typedef StoryCollections = List<StoryCollection>;
 
-class Story {
-  final String id;
-  final String titleAr; // 아랍어 제목
-  final StoryCollections collections;
-  // DB에 저장 (미리보기용 - 무료 공개)
-  final String? introAr; // 아랍어 서문
-  final String? commentaryAr; // 아랍어 해설/주석
-
-  // Storage 참조 (본문 - 구입 후 다운로드)
-  final String contentUrl; // Storage 경로 (예: 'story-contents/{id}.json')
-  final int contentVersion; // 콘텐츠 버전 (캐시 무효화용)
-  final int? contentSizeBytes; // 파일 크기 (다운로드 예상 시간 표시용)
-
-  final int orderIndex; // 컬렉션 내 정렬 순서
-  final bool isFree; // 무료 체험용 작품 여부
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  const Story({
-    required this.id,
-    required this.collections,
-    required this.titleAr,
-    this.introAr,
-    this.commentaryAr,
-    required this.contentUrl,
-    required this.contentVersion,
-    this.contentSizeBytes,
-    required this.orderIndex,
-    required this.isFree,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+@freezed
+abstract class Story with _$Story {
+  const Story._();
+  const factory Story({
+    required String id,
+    @JsonKey(name: 'title_ar') required String titleAr,
+    @JsonKey(name: 'intro_ar') required String? introAr,
+    @JsonKey(name: 'commentary_ar') required String? commentaryAr,
+    @JsonKey(name: 'content_url') required String contentUrl,
+    @JsonKey(name: 'content_version') required int contentVersion,
+    @JsonKey(name: 'is_free') required bool isFree,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+    @JsonKey(name: 'order_index') required int orderIndex,
+    @JsonKey(name: 'story_collections', fromJson: _storyCollectionsFromJson)
+    required StoryCollections collections,
+    required int? contentSizeBytes,
+  }) = _Story;
 
   /// Supabase에서 가져온 데이터를 모델로 변환
-  factory Story.fromMap(Map<String, dynamic> map) {
-    final storyCollections = (map['story_collections'] as List<dynamic>).map((
-      sc,
-    ) {
-      final collection = sc['collections'] as Map<String, dynamic>;
-      return (
-        id: collection['id'] as String,
-        rcIdentifier: collection['rc_identifier'] as String?,
-      );
-    }).toList();
-    return Story(
-      id: map['id'] as String,
-      collections: storyCollections,
-      titleAr: map['title_ar'] as String,
-      introAr: map['intro_ar'] as String?,
-      commentaryAr: map['commentary_ar'] as String?,
-      contentUrl: map['content_url'] as String,
-      contentVersion: map['content_version'] as int? ?? 1,
-      contentSizeBytes: map['content_size_bytes'] as int?,
-      orderIndex: map['order_index'] as int? ?? 0,
-      isFree: map['is_free'] as bool? ?? false,
-      createdAt: DateTime.parse(map['created_at'] as String),
-      updatedAt: DateTime.parse(map['updated_at'] as String),
-    );
-  }
-
-  /// copyWith 메서드
-  Story copyWith({
-    String? id,
-    StoryCollections? collections,
-    String? titleAr,
-    String? introAr,
-    String? commentaryAr,
-    String? contentUrl,
-    int? contentVersion,
-    int? contentSizeBytes,
-    int? orderIndex,
-    bool? isFree,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return Story(
-      id: id ?? this.id,
-      collections: collections ?? this.collections,
-      titleAr: titleAr ?? this.titleAr,
-      introAr: introAr ?? this.introAr,
-      commentaryAr: commentaryAr ?? this.commentaryAr,
-      contentUrl: contentUrl ?? this.contentUrl,
-      contentVersion: contentVersion ?? this.contentVersion,
-      contentSizeBytes: contentSizeBytes ?? this.contentSizeBytes,
-      orderIndex: orderIndex ?? this.orderIndex,
-      isFree: isFree ?? this.isFree,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
+  factory Story.fromJson(Map<String, dynamic> json) => _$StoryFromJson(json);
 
   /// 예상 다운로드 시간 (초) - 모바일 4G 기준 (5 Mbps)
   int get estimatedDownloadSeconds {
@@ -130,18 +61,16 @@ class Story {
 
     return parts.join('\n\n');
   }
+}
 
-  @override
-  String toString() {
-    return 'Story(id: $id, titleAr: $titleAr, isFree: $isFree)';
-  }
+List<StoryCollection> _storyCollectionsFromJson(dynamic json) {
+  if (json is! List) return [];
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Story && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
+  return json.map((sc) {
+    final collection = sc['collections'] as Map<String, dynamic>;
+    return (
+      id: collection['id'] as String,
+      rcIdentifier: collection['rc_identifier'] as String?,
+    );
+  }).toList();
 }

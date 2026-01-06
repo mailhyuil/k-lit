@@ -1,26 +1,18 @@
-/// 사용자 프로필 모델
-class Profile {
-  final String id;
-  final String? username;
-  final String? avatarUrl;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const Profile({
-    required this.id,
-    this.username,
-    this.avatarUrl,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+part 'profile.freezed.dart';
+part 'profile.g.dart';
 
-  factory Profile.fromMap(Map<String, dynamic> json) {
-    return Profile(
-      id: json['id'] as String,
-      username: json['username'] as String?,
-      avatarUrl: json['avatar_url'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
-  }
+@freezed
+abstract class Profile with _$Profile {
+  const factory Profile({
+    required String id,
+    String? username,
+    @JsonKey(name: 'avatar_url') String? avatarUrl,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+  }) = _Profile;
+
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
 }

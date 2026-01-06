@@ -39,7 +39,7 @@ class CollectionListPage extends ConsumerWidget {
             return _buildCollectionGrid(context, collections);
           },
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _buildErrorState(context, ref, error),
+          error: (error, stack) => _buildErrorState(context, ref, error, stack),
         ),
       ),
     );
@@ -65,7 +65,14 @@ class CollectionListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object? error) {
+  Widget _buildErrorState(
+    BuildContext context,
+    WidgetRef ref,
+    Object? error,
+    StackTrace? stackTrace,
+  ) {
+    debugPrint('컬렉션 목록 불러오기 오류: $error');
+    debugPrint('컬렉션 목록 불러오기 오류 스택 트레이스: $stackTrace');
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

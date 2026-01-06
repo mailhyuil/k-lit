@@ -11,11 +11,15 @@ final collectionsProvider = FutureProvider<List<Collection>>((ref) async {
       .from('collections')
       .select('*, stories(count)')
       .order('order_index', ascending: true);
-  return (response as List).map((map) => Collection.fromMap(map as Map<String, dynamic>)).toList();
+  return (response as List)
+      .map((map) => Collection.fromJson(map as Map<String, dynamic>))
+      .toList();
 });
 
 /// 구매된 컬렉션 목록을 제공하는 프로바이더
-final purchasedCollectionsProvider = FutureProvider<List<Collection>>((ref) async {
+final purchasedCollectionsProvider = FutureProvider<List<Collection>>((
+  ref,
+) async {
   final customerInfo = ref.watch(customerInfoProvider);
   if (customerInfo == null) {
     await ref.watch(purchaseControllerProvider.notifier).refresh();
@@ -23,19 +27,27 @@ final purchasedCollectionsProvider = FutureProvider<List<Collection>>((ref) asyn
   }
   final collections = await ref.watch(collectionsProvider.future);
   final collectionPurchased = collections.where(
-    (collection) => customerInfo.allPurchasedProductIdentifiers.contains(collection.rcIdentifier),
+    (collection) => customerInfo.allPurchasedProductIdentifiers.contains(
+      collection.rcIdentifier,
+    ),
   );
-  return collectionPurchased.map((collection) => collection.copyWith(isPurchased: true)).toList();
+  return collectionPurchased
+      .map((collection) => collection.copyWith(isPurchased: true))
+      .toList();
 });
 
-final collectionsWithStatusProvider = FutureProvider<List<Collection>>((ref) async {
+final collectionsWithStatusProvider = FutureProvider<List<Collection>>((
+  ref,
+) async {
   final customerInfo = ref.watch(customerInfoProvider);
   final collections = await ref.watch(collectionsProvider.future);
   return collections
       .map(
         (collection) => collection.copyWith(
           isPurchased:
-              customerInfo?.allPurchasedProductIdentifiers.contains(collection.rcIdentifier) ??
+              customerInfo?.allPurchasedProductIdentifiers.contains(
+                collection.rcIdentifier,
+              ) ??
               false,
         ),
       )
@@ -59,19 +71,18 @@ final freeCollectionsProvider = FutureProvider<List<Collection>>((ref) async {
 });
 
 /// 컬렉션 검색 프로바이더
-final searchCollectionsProvider = FutureProvider.family<List<Collection>, String>((
-  ref,
-  query,
-) async {
-  if (query.isEmpty) {
-    return ref.watch(collectionsWithStatusProvider.future);
-  }
+final searchCollectionsProvider =
+    FutureProvider.family<List<Collection>, String>((ref, query) async {
+      if (query.isEmpty) {
+        return ref.watch(collectionsWithStatusProvider.future);
+      }
 
-  final collections = await ref.watch(collectionsWithStatusProvider.future);
-  final lowerQuery = query.toLowerCase();
+      final collections = await ref.watch(collectionsWithStatusProvider.future);
+      final lowerQuery = query.toLowerCase();
 
-  return collections.where((collection) {
-    return collection.titleAr.toLowerCase().contains(lowerQuery) ||
-        (collection.descriptionAr?.toLowerCase().contains(lowerQuery) ?? false);
-  }).toList();
-});
+      return collections.where((collection) {
+        return collection.titleAr.toLowerCase().contains(lowerQuery) ||
+            (collection.descriptionAr?.toLowerCase().contains(lowerQuery) ??
+                false);
+      }).toList();
+    });

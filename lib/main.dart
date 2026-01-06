@@ -10,7 +10,10 @@ import 'core/config/supabase_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    return const SizedBox.shrink(); // 화면에 아무것도 안 띄움
+  };
   // 환경 변수 로드
   try {
     await dotenv.load(fileName: '.env');
